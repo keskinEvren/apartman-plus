@@ -1,5 +1,12 @@
 # 🚀 ASANMOD v1.0.0 - Enterprise SaaS Template
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![tRPC](https://img.shields.io/badge/tRPC-11-2596be)](https://trpc.io/)
+[![Drizzle](https://img.shields.io/badge/Drizzle-ORM-C5F74F)](https://orm.drizzle.team/)
+
 **AI-Native Software Factory | Ghost-Dev Protocol | Fully Modular Architecture**
 
 ---
