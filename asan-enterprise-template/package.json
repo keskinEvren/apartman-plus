@@ -1,6 +1,6 @@
 {
   "name": "asan-enterprise-template",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "fix": "next lint --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "verify": "node scripts/mod-tools/verify-core.cjs",
@@ -16,7 +19,10 @@
     "init": "node scripts/mod-tools/asan-init.js",
     "deploy-prod": "bash scripts/mod-tools/deploy-prod.sh",
     "seed": "npx tsx scripts/seed.ts",
+    "create-admin": "npx tsx scripts/create-admin.ts",
     "backup": "bash scripts/backup-db.sh",
+    "restore": "bash scripts/restore-db.sh",
+    "reset-dev": "bash scripts/reset-dev.sh",
     "health": "bash scripts/mod-tools/health-check.sh"
   },
   "dependencies": {
