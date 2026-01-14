@@ -4,13 +4,13 @@
 [![Node](https://img.shields.io/badge/Node-20%2B-green)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3%2B-blue)](https://www.typescriptlang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
-[![Version](https://img.shields.io/badge/Version-2.0.1-brightgreen)](https://github.com/masan3134/asanmod-enterprise)
+[![Version](https://img.shields.io/badge/Version-2.2.0-brightgreen)](https://github.com/masan3134/asanmod-enterprise)
 [![Completeness](https://img.shields.io/badge/Completeness-100%25-success)](https://github.com/masan3134/asanmod-enterprise)
 [![Production Ready](https://img.shields.io/badge/Production-Ready-success)](https://github.com/masan3134/asanmod-enterprise)
 
-> **AI-Native Software Factory** - Production-ready Next.js 15 + tRPC + PostgreSQL template with complete ASANMOD v1.1.1 infrastructure
+> **AI-Native Software Factory** - Production-ready Next.js 15 + tRPC + PostgreSQL template with ASANMOD v2.2.0 infrastructure
 
-**v2.0.1 (2026-01-14)**: Now includes **runtime-verified** builds, complete ASANMOD infrastructure, and comprehensive setup documentation. **Real-world tested** with 100% completeness score.
+**v2.2.0 (2026-01-15)**: Week 1 agent-recommended improvements with auto-wizard, DB bootstrap, env validation, and dev shortcuts. **100% autonomous setup** - zero manual intervention.
 
 ---
 
