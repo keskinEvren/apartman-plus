@@ -35,36 +35,78 @@ function isInstalled() {
 }
 
 // Pre-flight checks
-function runPreFlight() {
-  header('🔍 PRE-FLIGHT CHECK');
+async function runPreFlight(rl) {
+  header('🔍 SYSTEM AUDIT & PRE-FLIGHT');
   let allPassed = true;
+  const missingCritical = [];
+  const missingOptional = [];
 
-  // Node version
-  const nodeVersion = process.version.slice(1).split('.')[0];
-  const nodeOk = parseInt(nodeVersion) >= 18;
-  log(`  Node.js: v${process.version} ${nodeOk ? '✅' : '❌'}`, nodeOk ? COLORS.green : COLORS.red);
-  if (!nodeOk) allPassed = false;
+  // 1. Node.js
+  const nodeVersion = process.version.slice(1);
+  const majorNode = parseInt(nodeVersion.split('.')[0]);
+  const nodeOk = majorNode >= 18;
+  log(`  Node.js: v${nodeVersion} ${nodeOk ? '✅' : '❌'}`, nodeOk ? COLORS.green : COLORS.red);
+  if (!nodeOk) {
+    allPassed = false;
+    missingCritical.push(`Node.js >= 18 (Current: v${nodeVersion})`);
+  }
 
-  // Git
+  // 2. NPM
+  let npmVersion = 'Unknown';
   try {
-    execSync('git --version', { stdio: 'ignore' });
-    log('  Git: ✅', COLORS.green);
+    npmVersion = execSync('npm -v', { encoding: 'utf8' }).trim();
+    log(`  NPM: v${npmVersion} ✅`, COLORS.green);
+  } catch {
+    log('  NPM: ❌ (not found)', COLORS.red);
+    allPassed = false;
+    missingCritical.push('NPM');
+  }
+
+  // 3. Git
+  try {
+    const gitVer = execSync('git --version', { encoding: 'utf8' }).trim();
+    log(`  Git: ${gitVer} ✅`, COLORS.green);
   } catch {
     log('  Git: ❌ (not installed)', COLORS.red);
     allPassed = false;
+    missingCritical.push('Git');
   }
 
-  // PostgreSQL
+  // 4. PostgreSQL
   try {
-    execSync('psql --version', { stdio: 'ignore' });
-    log('  PostgreSQL: ✅', COLORS.green);
+    const pgVer = execSync('psql --version', { encoding: 'utf8' }).trim();
+    log(`  PostgreSQL: ${pgVer} ✅`, COLORS.green);
   } catch {
-    log('  PostgreSQL: ⚠️ (not found, will need DATABASE_URL in .env)', COLORS.yellow);
+    log('  PostgreSQL: ⚠️ (not found, expected for database)', COLORS.yellow);
+    missingOptional.push('PostgreSQL (Local Server)');
   }
 
-  // npm packages
-  const hasNodeModules = fs.existsSync(path.join(PROJECT_ROOT, 'node_modules'));
-  log(`  Dependencies: ${hasNodeModules ? '✅' : '⚠️ Run npm install'}`, hasNodeModules ? COLORS.green : COLORS.yellow);
+  // 5. PM2
+  try {
+    const pm2Ver = execSync('npx pm2 -v', { encoding: 'utf8' }).trim();
+    log(`  PM2 (via npx): v${pm2Ver} ✅`, COLORS.green);
+  } catch {
+    log('  PM2: ⚠️ (not found, needed for production)', COLORS.yellow);
+    missingOptional.push('PM2');
+  }
+
+  // Hardware Intro (Quick guess)
+  const memoryGB = Math.round(require('os').totalmem() / (1024 * 1024 * 1024));
+  const cpuCount = require('os').cpus().length;
+  log(`\n  Environment: ${cpuCount} CPUs, ${memoryGB}GB RAM`, COLORS.cyan);
+  log(`  Estimated Setup Footprint: ~500MB Disk, ~200MB RAM (Dev Mode)`, COLORS.cyan);
+
+  if (missingCritical.length > 0) {
+    log(`\n❌ CRITICAL MISSING: ${missingCritical.join(', ')}`, COLORS.red);
+    log('Please install these before continuing.\n');
+    return false;
+  }
+
+  if (missingOptional.length > 0) {
+    log(`\n⚠️  OPTIONAL MISSING: ${missingOptional.join(', ')}`, COLORS.yellow);
+    const answer = await ask(rl, '  Proceed anyway? (Y/n):');
+    if (answer.toLowerCase() === 'n') return false;
+  }
 
   return allPassed;
 }
@@ -187,16 +229,17 @@ async function runWizard() {
     return;
   }
 
+  const rl = createPrompt();
+
   header('🧙 ASANMOD v2.0.1 WIZARD');
   log('\nWelcome! This wizard will set up your project.\n');
 
   // Pre-flight
-  if (!runPreFlight()) {
-    log('\n❌ Pre-flight checks failed. Please fix issues above.', COLORS.red);
+  if (!(await runPreFlight(rl))) {
+    log('\n❌ Pre-flight checks failed or cancelled.', COLORS.red);
+    rl.close();
     return;
   }
-
-  const rl = createPrompt();
 
   // Collect information
   header('📝 PROJECT INFORMATION');
