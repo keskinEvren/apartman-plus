@@ -12,9 +12,6 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(superjson|next-auth|@babel/runtime|@opentelemetry)/)',
-  ],
   testMatch: [
     '**/__tests__/**/*.test.{js,jsx,ts,tsx}',
   ],

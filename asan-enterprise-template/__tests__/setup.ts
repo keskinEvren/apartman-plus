@@ -2,6 +2,12 @@
  * Test Setup
  * Runs before all tests
  */
+import { TextEncoder, TextDecoder } from "util";
+
+// Polyfill TextEncoder/TextDecoder for JSDOM
+// required by pg and superjson
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder as any;
 
 // Set test environment variables
 // Use Object.defineProperty to avoid READ-ONLY error
