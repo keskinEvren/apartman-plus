@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 2026-01-14
+### Added
+- **Self-Healing Setup**: Added `npm run doctor` for deep environment diagnosis.
+- **In-Memory Postgres**: Integrated `pg-mem` for zero-config integration tests.
+- **Agent Knowledge Mesh**: Added `docs/ARCH.md` and `docs/AUDIT_TEMPLATE.md`.
+- **DB Auto-Auth**: Wizard now offers to create PG roles.
+
+### Fixed
+- **Decisive ESM Fix**: Downgraded `superjson` to v1.13.3 for Jest compatibility.
+- **Test Isolation**: Restricted Jest to core folders to avoid MCP collisions.
+
 ## [2.0.1] - 2026-01-14
 
 ### Enterprise Certification (Green Run)
