@@ -1,26 +1,14 @@
 /**
- * AUTO-GENERATED DATABASE SCHEMA
+ * Database Schema Aggregator
  *
- * This file exports all module schemas and defines their relations.
- * Relations are centralized here to avoid circular dependencies.
+ * This file imports and re-exports all database schemas.
+ * Import new schemas here as you create them.
  */
 
-// Table Exports
-export * from "../modules/users/schema";
-export * from "../modules/posts/schema";
+// Export all schemas
+export * from "./schema/users";
 
-// Centralized Relations
-import { relations } from "drizzle-orm";
-import { users } from "../modules/users/schema";
-import { posts } from "../modules/posts/schema";
-
-export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-}));
-
-export const postsRelations = relations(posts, ({ one }) => ({
-  author: one(users, {
-    fields: [posts.authorId],
-    references: [users.id],
-  }),
-}));
+// Add more schema exports here as you create them
+// Example:
+// export * from "./schema/posts";
+// export * from "./schema/comments";
