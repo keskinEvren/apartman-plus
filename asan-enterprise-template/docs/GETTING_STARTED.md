@@ -1,6 +1,6 @@
 # Getting Started with ASANMOD Enterprise Template
 
-> **Complete setup guide for first-time users**
+> **Complete setup guide for first-time users AND agents**
 
 ---
 
@@ -11,41 +11,67 @@ Before you begin, ensure you have:
 - **Node.js** 20.x or higher
 - **PostgreSQL** 14.x or higher
 - **npm** or **yarn**
-- **Git**
+- **Git** (REQUIRED)
 
 Optional:
 - **PM2** (for production deployment)
 
 ---
 
-## 🚀 Step-by-Step Setup
+## 🚨 IMPORTANT: Git Repository Setup
 
-### 1. Clone the Repository
+**This template MUST be in a Git repository.**
 
+### If Cloning from GitHub (Recommended)
 ```bash
-git clone <repository-url> my-app
-cd my-app
+git clone https://github.com/masan3134/asanmod-enterprise.git my-app
+cd my-app/asan-enterprise-template
 ```
 
-### 2. Install Dependencies
+### If Starting Fresh
+```bash
+# Create your project directory
+mkdir my-app
+cd my-app
+
+# Initialize Git FIRST
+git init
+git branch -M main
+
+# Copy template files here
+# ... then continue with setup
+```
+
+**Why Git is mandatory:**
+- Husky hooks enforce code quality
+- Commit format validation
+- Version control for all changes
+
+---
+
+## 🚀 Step-by-Step Setup
+
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-This will install ~755 packages including:
-- Next.js 15
-- React 18.3
-- tRPC
-- Drizzle ORM
-- PostgreSQL driver
-- And all dev dependencies
+This will:
+- Install ~755 packages
+- **Automatically setup Husky hooks** (via `prepare` script)
 
 **Expected time**: 1-2 minutes
 
+**Verify Husky installed:**
+```bash
+ls -la .husky/
+# Should show: commit-msg, pre-commit
+```
+
 ---
 
-### 3. Setup PostgreSQL Database
+### 2. Setup PostgreSQL Database
 
 #### Create Database
 
@@ -56,11 +82,11 @@ psql -U postgres
 # Create database
 CREATE DATABASE my_app_dev_db;
 
-# Create user (optional, if not using postgres user)
+# Create user (optional)
 CREATE USER myuser WITH PASSWORD 'mypassword';
 GRANT ALL PRIVILEGES ON DATABASE my_app_dev_db TO myuser;
 
-# Exit psql
+# Exit
 \q
 ```
 
@@ -70,107 +96,74 @@ GRANT ALL PRIVILEGES ON DATABASE my_app_dev_db TO myuser;
 psql -U postgres -d my_app_dev_db -c "SELECT 1;"
 ```
 
-Should return:
-```
- ?column?
-----------
-        1
-(1 row)
-```
-
 ---
 
-### 4. Configure Environment Variables
+### 3. Configure Environment Variables
 
 ```bash
 # Copy example file
 cp .env.example .env
 
 # Edit .env
-nano .env  # or use your preferred editor
+nano .env
 ```
 
 #### Required Variables
 
 ```bash
-# Database Connection
+# Database
 DATABASE_URL="postgresql://postgres:password@localhost:5432/my_app_dev_db"
 
-# Authentication
+# JWT Secret (GENERATE NEW!)
 JWT_SECRET="change-this-to-a-random-secret-key"
 
-# Admin User (for create-admin script)
+# Admin User
 ADMIN_EMAIL="admin@example.com"
 ADMIN_PASSWORD="your-secure-password"
 ```
 
-#### Generate JWT Secret
+#### Generate Secure JWT Secret
 
 ```bash
-# Generate random secret
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Copy the output to `JWT_SECRET` in `.env`.
+Copy output to `JWT_SECRET` in `.env`.
 
 ---
 
-### 5. Initialize Database Schema
+### 4. Initialize Database Schema
 
 ```bash
-# Push schema to database
 npm run db:push
 ```
-
-This creates the `users` table and any other defined schemas.
 
 **Expected output:**
 ```
 ✓ Database schema pushed successfully
 ```
 
-#### Verify Schema
-
-```bash
-psql -U postgres -d my_app_dev_db -c "\dt"
-```
-
-Should show the `users` table.
-
 ---
 
-### 6. Create Admin User (Optional)
+### 5. Create Admin User (Optional)
 
 ```bash
 npm run create-admin
 ```
 
-**Expected output:**
-```
-👤 Creating admin user...
-✅ Admin user created successfully!
-
-📝 Admin Credentials:
-   Email: admin@example.com
-   Password: your-secure-password
-```
-
 ---
 
-### 7. Seed Database (Optional)
+### 6. Seed Database (Optional)
 
 ```bash
 npm run seed
 ```
 
-Creates 3 test users:
-- Admin: `admin@example.com` / `admin123`
-- User: `user@example.com` / `test123`
-- Demo: `demo@example.com` / `test123`
+Creates 3 test users for development.
 
 ---
 
-### 8. Start Development Server
+### 7. Start Development Server
 
 ```bash
 npm run dev
@@ -180,129 +173,95 @@ npm run dev
 ```
 ▲ Next.js 15.0.0
 - Local:        http://localhost:3000
-- Network:      http://192.168.1.x:3000
 
 ✓ Ready in 2.3s
 ```
 
-#### Verify
-
-Open browser to http://localhost:3000
-
-You should see the landing page.
+Open browser to **http://localhost:3000**
 
 ---
 
-## ✅ Verification Checklist
+## 🔒 Git & Code Quality Setup
 
-After setup, verify everything works:
+### Husky Hooks (Auto-installed)
 
-### Frontend
-- [ ] http://localhost:3000 loads
-- [ ] Landing page displays
-- [ ] Login page accessible (/login)
-- [ ] Register page accessible (/register)
+After `npm install`, two hooks are active:
 
-### Database
-- [ ] Database created
-- [ ] Schema pushed successfully
-- [ ] Admin user created (if ran create-admin)
-- [ ] Can connect via psql
+**1. Pre-commit Hook** (`.husky/pre-commit`)
+- Runs `npm run lint` on changed files
+- Blocks commit if linting fails
+- Ensures code quality
 
-### Build
-- [ ] `npm run build` succeeds (0 errors)
-- [ ] `npm run lint` passes (0 errors)
+**2. Commit Message Hook** (`.husky/commit-msg`)
+- Enforces conventional commit format
+- **Format**: `type(scope): message`
 
-### Scripts
-- [ ] `npm run seed` works
-- [ ] `npm run create-admin` works
+### Commit Format Rules
 
----
-
-## 🔧 Troubleshooting
-
-### Port Already in Use
-
-```bash
-# Find process using port 3000
-lsof -ti:3000
-
-# Kill process
-kill -9 $(lsof -ti:3000)
-
-# Restart
-npm run dev
+**Valid commit types:**
+```
+feat     - New feature
+fix      - Bug fix
+docs     - Documentation changes
+style    - Code style (formatting, etc.)
+refactor - Code refactoring
+test     - Adding tests
+chore    - Maintenance tasks
 ```
 
-### Database Connection Error
-
+**Examples:**
 ```bash
-# Check PostgreSQL is running
-sudo systemctl status postgresql
+✅ git commit -m "feat(auth): add login validation"
+✅ git commit -m "fix(api): resolve CORS issue"
+✅ git commit -m "docs(readme): update installation steps"
 
-# Start if not running
-sudo systemctl start postgresql
-
-# Verify connection string
-psql "postgresql://postgres:password@localhost:5432/my_app_dev_db"
+❌ git commit -m "updated stuff"         # Missing type
+❌ git commit -m "WIP feature"           # Not conventional
 ```
 
-### npm install Fails
+### Testing Hooks
 
 ```bash
-# Clear cache
-npm cache clean --force
+# Test pre-commit
+git add .
+git commit -m "test: verifying hooks"
+# Should run lint automatically
 
-# Delete node_modules
-rm -rf node_modules package-lock.json
-
-# Reinstall
-npm install
-```
-
-### Build Errors
-
-```bash
-# Check Node version
-node --version  # Should be 20.x or higher
-
-# Update Node if needed
-nvm install 20
-nvm use 20
-
-# Retry build
-npm run build
+# If lint fails, commit is blocked
+# Fix issues, then retry
 ```
 
 ---
 
-## 🎯 Next Steps
+## 🚀 PM2 Production Setup
 
-### Development
-
-1. **Explore the code**
-   - Check `src/app/` for pages
-   - Check `src/components/` for components
-   - Check `src/server/routers/` for tRPC routers
-
-2. **Read documentation**
-   - `docs/AGENT_QUICK_REF.md` - Quick reference
-   - `docs/ARCHITECTURE.md` - System architecture
-   - `docs/asanmod-core.json` - Core configuration
-
-3. **Start building**
-   - Add new pages in `src/app/`
-   - Create components in `src/components/`
-   - Add tRPC routers in `src/server/routers/`
-
-### Production Deployment
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide.
-
-Quick version:
+### Install PM2 Globally
 
 ```bash
-# Build for production
+npm install -g pm2
+
+# Verify installation
+pm2 --version
+```
+
+### Dev/Prod Port Isolation
+
+**CRITICAL: Dev and Prod run on DIFFERENT ports**
+
+| Environment | Frontend | Backend |
+|-------------|----------|---------|
+| **Development** | 3000 | 3001 |
+| **Production** | 3002 | 3003 |
+
+**Why?**
+- Both can run simultaneously
+- No port conflicts
+- Complete isolation
+
+### Start Production
+
+```bash
+# Build
 npm run build
 
 # Start with PM2
@@ -310,50 +269,177 @@ npm run build
 
 # Verify
 curl http://localhost:3002
+# Should return 200 OK
 ```
+
+### PM2 Commands (via Wrapper)
+
+```bash
+# Development
+./scripts/mod-tools/pm dev status
+./scripts/mod-tools/pm dev restart
+./scripts/mod-tools/pm dev logs
+
+# Production
+./scripts/mod-tools/pm prod status
+./scripts/mod-tools/pm prod restart
+./scripts/mod-tools/pm prod logs
+```
+
+**Never use `pm2` directly! Always use the wrapper.**
+
+### PM2 Configuration
+
+Configuration is in `ecosystem.config.cjs`:
+- Dev: Fork mode with watch/hot-reload
+- Prod: Cluster mode for performance
+
+---
+
+## ✅ Verification Checklist
+
+### Infrastructure
+- [ ] Git repository initialized
+- [ ] Husky hooks installed (`.husky/` exists)
+- [ ] Can make commits (hooks work)
+- [ ] PM2 installed globally (optional)
+
+### Frontend
+- [ ] http://localhost:3000 loads
+- [ ] Landing page displays
+- [ ] Login/Register accessible
+
+### Database
+- [ ] Database created
+- [ ] Schema pushed
+- [ ] Can connect via psql
+
+### Build
+- [ ] `npm run build` succeeds (0 errors)
+- [ ] `npm run lint` passes
+
+### Git Workflow
+- [ ] Commits follow conventional format
+- [ ] Pre-commit hook runs lint
+- [ ] Can push to remote
 
 ---
 
 ## 🤖 For AI Agents
 
-If you're an AI agent working on this project:
+### First-Time Setup Sequence
 
-1. **Read first**:
-   - `docs/asanmod-core.json` - Configuration
-   - `docs/AGENT_QUICK_REF.md` - Commands
-   - Your protocol file (`GEMINI.md`, `CURSOR.md`, or `CLAUDE.md`)
+1. **Read protocol**: `GEMINI.md` or `CURSOR.md` or `CLAUDE.md`
+2. **Run wizard**: `npm run wizard` (MANDATORY)
+3. **Read this guide**: Complete all steps above
+4. **Read configuration**: `docs/asanmod-core.json`
+5. **Read commands**: `docs/AGENT_QUICK_REF.md`
 
-2. **Port configuration**:
-   - DEV: 3000 (frontend), 3001 (backend)
-   - PROD: 3002 (frontend), 3003 (backend)
-   - Always read from `asanmod-core.json`
+### Critical Rules
 
-3. **Workflow**:
-   - Make changes
-   - Run `npm run lint`
-   - Run `npm run build` to verify
-   - Test locally
-   - Commit with conventional format: `type(scope): message`
+- **ALWAYS** commit with conventional format
+- **ALWAYS** run `npm run lint` before push
+- **NEVER** use `pm2` directly (use `./scripts/mod-tools/pm`)
+- **NEVER** hardcode ports (read from `asanmod-core.json`)
+- **NEVER** touch production on port 3002 (dev only)
+
+### Port Configuration
+
+**Dev Environment** (for development):
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:3001`
+
+**Prod Environment** (for production):
+- Frontend: `http://localhost:3002`
+- Backend: `http://localhost:3003`
+
+Always start on DEV ports unless deploying.
+
+---
+
+## 🔧 Troubleshooting
+
+### Husky Hooks Not Working
+
+```bash
+# Reinstall hooks
+npm run prepare
+
+# Verify
+ls -la .husky/
+# Should show commit-msg and pre-commit
+```
+
+### Commit Blocked
+
+```bash
+# Check what's wrong
+npm run lint
+
+# Fix issues
+npm run fix
+
+# Retry commit
+git commit -m "fix(scope): message"
+```
+
+### PM2 Command Not Found
+
+```bash
+# Install PM2 globally
+npm install -g pm2
+
+# Or use npx
+npx pm2 status
+```
+
+### Port Already in Use
+
+```bash
+# Find process
+lsof -ti:3000
+
+# Kill it
+kill -9 $(lsof -ti:3000)
+
+# Restart
+npm run dev
+```
+
+---
+
+## 🎯 Next Steps
+
+### Development Workflow
+
+1. Make changes to code
+2. Test locally (`npm run dev`)
+3. Run lint (`npm run lint`)
+4. Commit with conventional format
+5. Push to remote
+
+### Production Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete guide.
+
+Quick version:
+```bash
+npm run build
+./scripts/mod-tools/pm prod start
+curl http://localhost:3002  # Verify
+```
 
 ---
 
 ## 📚 Additional Resources
 
+- [AGENT_QUICK_REF.md](./AGENT_QUICK_REF.md) - All commands
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
 - [DEPLOYMENT.md](./DEPLOYMENT.md) - Production deployment
 - [MCP_SETUP.md](./MCP_SETUP.md) - MCP server setup
-- [AGENT_QUICK_REF.md](./AGENT_QUICK_REF.md) - Quick reference
-
----
-
-## 🆘 Still Having Issues?
-
-1. Check existing issues in the repository
-2. Review troubleshooting section above
-3. Ensure all prerequisites are installed
-4. Verify environment variables are correct
+- [asanmod-core.json](./asanmod-core.json) - Core configuration
 
 ---
 
 *Last Updated: 2026-01-14*
-*Template Version: 2.0*
+*Template Version: 2.0.1*
