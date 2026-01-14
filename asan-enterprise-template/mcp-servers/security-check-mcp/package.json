@@ -1,5 +1,5 @@
 {
-  "name": "@ikai/security-check-mcp",
+  "name": "@asanmod/security-check-mcp",
   "version": "1.0.0",
   "description": "Security check MCP - Semgrep alternatifi",
   "type": "module",

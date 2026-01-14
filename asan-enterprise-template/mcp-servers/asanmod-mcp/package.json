@@ -1,5 +1,5 @@
 {
-  "name": "@ikai/asanmod-mcp",
+  "name": "@asanmod/asanmod-mcp",
   "version": "1.0.0",
   "description": "ASANMOD MCP Server - MOD ve Worker arasında merkezi doğrulama ve denetim katmanı",
   "type": "module",
@@ -24,7 +24,7 @@
     "mod",
     "worker"
   ],
-  "author": "IKAI Team",
+  "author": "ASANMOD Community",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
