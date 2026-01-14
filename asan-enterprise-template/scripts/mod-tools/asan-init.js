@@ -1,8 +1,13 @@
 #!/usr/bin/env node
+/**
+ * ASANMOD v2.0.1: Project Initialization
+ * Creates required directories and initial .env
+ */
+
 const fs = require('fs');
 const path = require('path');
 
-console.log("🚀 ASANMOD v1.0.0: Initializing Project Factory...");
+console.log("🚀 ASANMOD v2.0.1: Initializing Project...");
 
 const PROJECT_ROOT = process.cwd();
 const ENV_PATH = path.join(PROJECT_ROOT, ".env");
@@ -22,7 +27,7 @@ if (!fs.existsSync(ENV_PATH)) {
 }
 
 // 2. Create required directories
-const dirs = [".asanmod/state", ".asanmod/logs", ".asanmod/artifacts"];
+const dirs = [".asanmod/state", ".asanmod/logs", "logs"];
 dirs.forEach(dir => {
   const dirPath = path.join(PROJECT_ROOT, dir);
   if (!fs.existsSync(dirPath)) {
@@ -32,8 +37,8 @@ dirs.forEach(dir => {
 });
 
 console.log("\n✨ ASANMOD INITIALIZATION COMPLETE.");
-console.log("👉 Next steps (Ghost-Dev Protocol):");
-console.log("   1. Check your .env file and set DATABASE_URL.");
-console.log("   2. Run 'npm install'.");
-console.log("   3. PERFORM STRATEGIC INTERVIEW (Ask the 4 core questions from docs/GHOST_DEV_PROTOCOL.md).");
-console.log("   4. Once answered, run 'asan verify' and start OTONOM production.");
+console.log("👉 Next steps:");
+console.log("   1. Edit .env file and set DATABASE_URL");
+console.log("   2. Run: npm run db:push");
+console.log("   3. Run: npm run seed (optional)");
+console.log("   4. Run: npm run dev");

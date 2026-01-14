@@ -1,35 +1,77 @@
 #!/bin/bash
-# ASANMOD v2.0.1: Single-Command Installer
+# ASANMOD v2.0.1: One-Command Installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/masan3134/asanmod-enterprise/main/install.sh | bash
 
 set -e
 
 PROJECT_NAME="${1:-my-app}"
 
-echo "🚀 ASANMOD v2.0.1: Enterprise Template Installer"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}🚀 ASANMOD v2.0.1: Enterprise Template Installer${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Step 1: Clone repository
-echo "📦 Cloning template..."
-git clone https://github.com/masan3134/asanmod-enterprise.git "$PROJECT_NAME"
+# Prerequisite checks
+echo -e "${YELLOW}🔍 Checking prerequisites...${NC}"
+
+# Check Node.js
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}❌ Node.js not found${NC}"
+    echo "Please install Node.js 20+ from https://nodejs.org"
+    exit 1
+fi
+
+NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+if [ "$NODE_VERSION" -lt 20 ]; then
+    echo -e "${RED}❌ Node.js version too old: $NODE_VERSION${NC}"
+    echo "Please upgrade to Node.js 20+"
+    exit 1
+fi
+echo -e "${GREEN}✅ Node.js v$(node -v)${NC}"
+
+# Check npm
+if ! command -v npm &> /dev/null; then
+    echo -e "${RED}❌ npm not found${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✅ npm v$(npm -v)${NC}"
+
+# Check git
+if ! command -v git &> /dev/null; then
+    echo -e "${RED}❌ git not found${NC}"
+    echo "Please install git"
+    exit 1
+fi
+echo -e "${GREEN}✅ git v$(git --version | cut -d' ' -f3)${NC}"
+
+echo ""
+
+# Clone repository with tag pin
+echo -e "${YELLOW}📦 Cloning template...${NC}"
+git clone --depth 1 --branch main https://github.com/masan3134/asanmod-enterprise.git "$PROJECT_NAME"
 cd "$PROJECT_NAME/asan-enterprise-template"
 
-# Step 2: Install dependencies
+# Install dependencies
 echo ""
-echo "📦 Installing dependencies..."
+echo -e "${YELLOW}📦 Installing dependencies...${NC}"
 npm install
 
-# Step 3: Run wizard
+# Run wizard
 echo ""
-echo "🧙 Running setup wizard..."
+echo -e "${YELLOW}🧙 Running setup wizard...${NC}"
 npm run wizard
 
-# Step 4: Success message
+# Success
 echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ ASANMOD Template installed successfully!"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}✅ ASANMOD Template installed successfully!${NC}"
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 echo "📂 Project location: $(pwd)"
 echo ""
@@ -44,4 +86,4 @@ echo "📚 Documentation: README.md & docs/GETTING_STARTED.md"
 echo "🤖 Agent Protocol: GEMINI.md (or CURSOR.md / CLAUDE.md)"
 echo ""
 echo "🎯 ASANMOD v2.0.1 - Production Ready"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
