@@ -88,7 +88,7 @@ function extractVersionInfo(
 ): { version?: string; toolCount?: number; date?: string } {
   const result: { version?: string; toolCount?: number; date?: string } = {};
 
-  // Extract ASANMOD version (e.g., "ASANMOD v2.3-BRAIN" or "Version: 2.3-BRAIN")
+  // Extract ASANMOD version (e.g., "ASANMOD v3.0.0-BRAIN" or "Version: 2.3-BRAIN")
   const versionPatterns = [
     /ASANMOD v([0-9]+\.[0-9]+-?[A-Z]*)/i,
     /Version:\s*([0-9]+\.[0-9]+-?[A-Z]*)/i,

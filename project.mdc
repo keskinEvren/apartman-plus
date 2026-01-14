@@ -1,10 +1,10 @@
 <!--
-ASANMOD v2.0 - PROJECT CONTEXT
+ASANMOD v3.0.0 - PROJECT CONTEXT
 ID: CONST-005
 STATUS: TEMPLATE
 TYPE: RULES
 LAST_UPDATED: [WIZARD_WILL_FILL]
-VERSION: v2.1.0-alpha
+VERSION: v3.0.0
 -->
 
 # [PROJECT_NAME] - ASANMOD PROJECT CONTEXT
@@ -13,7 +13,7 @@ VERSION: v2.1.0-alpha
 
 - **App:** [PROJECT_NAME] ([PROJECT_DESCRIPTION])
 - **Stack:** Next.js 15 (App Router), tRPC, Drizzle ORM, PostgreSQL, TailwindCSS
-- **Governance:** ASANMOD v2.0
+- **Governance:** ASANMOD v3.0.0
 
 ## 🚀 QUICK START
 
@@ -90,7 +90,7 @@ src/
 1. `read_file("docs/AGENT_QUICK_REF.md")`
 2. `read_file("docs/asanmod-core.json")`
 3. Check `.asanmod/installed.lock` exists
-4. Report: "**ASANMOD v2.0 ONLINE. Project: [PROJECT_NAME]**"
+4. Report: "**ASANMOD v3.0.0 ONLINE. Project: [PROJECT_NAME]**"
 
 ---
 
@@ -146,4 +146,4 @@ cat .asanmod/manifest.json | jq '.health'
 
 ---
 
-*ASANMOD v2.1.0-alpha - Agent Discipline Enabled*
+*ASANMOD v3.0.0 - Agent Discipline Enabled*

@@ -52,7 +52,7 @@ export function generateCursorRulesContent(memoryData: {
   fullContent: string;
 } {
   const sections: Array<{ section: string; content: string }> = [];
-  let fullContent = "# Cursor Rules - IKAI HR Platform - ASANMOD v2.1\n\n";
+  let fullContent = "# Cursor Rules - IKAI HR Platform - ASANMOD v3.0.0\n\n";
 
   // MOD Identity section
   fullContent += "## MOD Identity\n\n";

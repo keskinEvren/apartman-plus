@@ -2,7 +2,7 @@
  * ASANMOD v1.1.1: VERSION MANAGER (Master Orchestrator)
  * Single source of truth for versioning.
  *
- * v2.1.0-alpha+ ZERO-ERROR AUTOMATION
+ * v3.0.0-alpha+ ZERO-ERROR AUTOMATION
  */
 const fs = require("fs");
 const path = require("path");
@@ -45,7 +45,7 @@ function getVersion() {
 }
 
 /**
- * Bump patch version (v2.0.x -> v2.0.x+1)
+ * Bump patch version (v3.0.0x -> v3.0.0x+1)
  */
 function bumpVersion() {
   const pkg = readJSON(CONFIG.PACKAGE_FILE);

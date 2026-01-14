@@ -1,5 +1,5 @@
 #!/bin/bash
-# ASANMOD v2.1.0-alpha: DB-Safe Rollback Script
+# ASANMOD v3.0.0-alpha: DB-Safe Rollback Script
 # Rolls back to specific commit with DB safety
 
 set -e

@@ -1,5 +1,5 @@
 #!/bin/bash
-# ASANMOD v2.1.0-alpha: Code Quality Verification with Evidence Logging
+# ASANMOD v3.0.0-alpha: Code Quality Verification with Evidence Logging
 # Runs: ESLint + TypeScript + Tests + Env Check + Build
 # Creates: logs/verify-YYYYMMDD-HHMMSS.json
 

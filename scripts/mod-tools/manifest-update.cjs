@@ -1,5 +1,5 @@
 /**
- * ASANMOD v2.1.0-alpha: MANIFEST UPDATE UTILITY
+ * ASANMOD v3.0.0-alpha: MANIFEST UPDATE UTILITY
  *
  * Allows scripts to programmatically update .asanmod/manifest.json flags and state.
  *

@@ -84,7 +84,7 @@ export async function getProjectContext(): Promise<MemoryOptimizerResult> {
       data: {
         project: "IKAI HR Platform",
         location: "/home/root/projects/ikaicursor",
-        system: "ASANMOD v2.1",
+        system: "ASANMOD v3.0.0",
         techStack: {
           backend: "Node.js + Express + Prisma + PostgreSQL",
           frontend: "Next.js 14 + TypeScript + Tailwind",

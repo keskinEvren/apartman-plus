@@ -12,7 +12,7 @@ export default function HomePage() {
             🚀 [PROJECT_NAME]
           </h1>
           <p className="text-xl text-gray-300 mb-8">
-            Built with ASANMOD Enterprise Template v2.0
+            Built with ASANMOD Enterprise Template v3.0.0
           </p>
           <div className="flex gap-4 justify-center">
             <Link

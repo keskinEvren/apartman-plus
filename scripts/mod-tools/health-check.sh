@@ -1,5 +1,5 @@
 #!/bin/bash
-# ASANMOD v2.1.0-alpha: System Health Check
+# ASANMOD v3.0.0-alpha: System Health Check
 # Checks dev and prod servers
 
 # Colors
