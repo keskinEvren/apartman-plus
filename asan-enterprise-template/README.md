@@ -7,7 +7,7 @@ last_audited: "2026-01-14"
 critical: true
 ---
 
-# ASANMOD Enterprise Template v2.1.0-alpha
+# ASANMOD Enterprise Template v2.2.0
 
 > **The World's First AI-Native Enterprise Template** ✨
 > Production-ready Next.js 15 + tRPC + PostgreSQL with autonomous agent support
@@ -39,6 +39,8 @@ npm run dev
 - ✅ Environment setup
 - ✅ Placeholder purging
 - ✅ Project customization
+
+> 💡 **Note**: Wizard runs automatically on first `npm install`!
 
 **First time?** Read [GETTING_STARTED.md](./docs/GETTING_STARTED.md) or [AGENT_FIRST_PLAN.md](./AGENT_FIRST_PLAN.md)
 
@@ -73,12 +75,15 @@ npm run dev
 - ✅ **Role-Based Access** - Admin, user, custom roles
 - ✅ **Password Hashing** - bcrypt with proper salting
 
-### AI-Native Features (NEW in v2.1.0-alpha)
+### AI-Native Features (NEW in v2.2.0)
 - ✅ **`.asanmod/manifest.json`** - Runtime state tracking
 - ✅ **YAML Frontmatter** - Machine-readable metadata on all docs
 - ✅ **Context-Aware Wizard** - 100% autonomous placeholder purging
-- ✅ **Dependency Map** - `asanmod-core.json` traces module relationships
-- ✅ **Protection Rules** - Read-only files, protected branches
+- ✅ **Auto Wizard Run** - Runs automatically on first npm install
+- ✅ **DB Bootstrap** - Interactive PostgreSQL setup (`npm run db:bootstrap`)
+- ✅ **Env Validation** - Zod schema validates .env at startup
+- ✅ **Dev Shortcuts** - Test data seeding (`npm run db:seed:dev`)
+- ✅ **File Organization** - Structure guidelines for scaling
 
 ### Developer Experience
 - ✅ **0-0-0 Policy** - Zero errors, warnings, or type issues enforced
@@ -169,8 +174,11 @@ npm run start            # Start production server
 
 # Database
 npm run db:push          # Push schema changes
+npm run db:bootstrap     # Interactive DB setup (first-time)
 npm run db:studio        # Open Drizzle Studio
 npm run seed             # Seed database
+npm run db:seed:dev      # Seed test users & todos
+npm run db:reset         # Push + seed combo
 npm run create-admin     # Create admin user
 
 # Quality
@@ -238,4 +246,4 @@ This template is **specifically optimized** for autonomous agents:
 ---
 
 **Built with ❤️ by the ASANMOD team**
-*ASANMOD Enterprise Template v2.1.0-alpha* - The World's First AI-Native Enterprise Template
+*ASANMOD Enterprise Template v2.2.0* - The World's First AI-Native Enterprise Template
