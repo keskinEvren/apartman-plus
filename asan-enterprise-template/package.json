@@ -3,6 +3,7 @@
   "version": "2.1.0-alpha",
   "private": true,
   "scripts": {
+    "postinstall": "node scripts/check-first-run.js",
     "prepare": "husky install || true",
     "dev": "next dev",
     "build": "next build",
@@ -15,6 +16,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "node --env-file=.env node_modules/.bin/drizzle-kit push:pg",
+    "db:bootstrap": "node scripts/db-bootstrap.js",
     "wizard": "node scripts/mod-tools/asan-wizard.js",
     "init": "node scripts/mod-tools/asan-init.js",
     "deploy-prod": "bash scripts/mod-tools/deploy-prod.sh",

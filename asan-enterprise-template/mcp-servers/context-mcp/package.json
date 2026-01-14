@@ -1,6 +1,7 @@
 {
-  "name": "@ikai/ikai-memory-mcp",
+  "name": "@asanmod/context-mcp",
   "version": "1.0.0",
+  "description": "Context management MCP for AI agents - optimizes conversation memory and token usage",
   "private": true,
   "type": "module",
   "main": "index.js",

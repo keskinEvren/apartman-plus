@@ -45,6 +45,7 @@ next-env.d.ts
 .asanmod/logs/
 .asanmod/checkpoints/
 .asanmod/artifacts/
+.asanmod/wizard-completed
 
 # ASANMOD State (CRITICAL - DO NOT COMMIT)
 .asanmod/installed.lock
