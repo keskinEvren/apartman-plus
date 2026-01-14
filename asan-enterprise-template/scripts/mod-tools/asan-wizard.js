@@ -90,7 +90,12 @@ function ask(rl, question) {
 function updateConfig(projectName, projectDesc, modules) {
   const configPath = path.join(PROJECT_ROOT, 'docs/asanmod-core.json');
   if (fs.existsSync(configPath)) {
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    let content = fs.readFileSync(configPath, 'utf8');
+    content = content.replace(/\[PROJECT_NAME\]/g, projectName);
+    content = content.replace(/\[PROJECT_DESCRIPTION\]/g, projectDesc);
+    content = content.replace(/\[DB_USER\]/g, 'postgres');
+
+    const config = JSON.parse(content);
     config.name = projectName;
     config.description = projectDesc;
     config.modules = modules;
@@ -100,17 +105,29 @@ function updateConfig(projectName, projectDesc, modules) {
   }
 }
 
-// Update project.mdc
-function updateProjectMdc(projectName, projectDesc) {
-  const mdcPath = path.join(PROJECT_ROOT, 'project.mdc');
-  if (fs.existsSync(mdcPath)) {
-    let content = fs.readFileSync(mdcPath, 'utf8');
-    content = content.replace(/\[PROJECT_NAME\]/g, projectName);
-    content = content.replace(/\[PROJECT_DESCRIPTION\]/g, projectDesc);
-    content = content.replace('[WIZARD_WILL_FILL]', new Date().toISOString().split('T')[0]);
-    fs.writeFileSync(mdcPath, content);
-    log('  ✅ project.mdc updated', COLORS.green);
-  }
+// Global purge for UI files
+function purgePlaceholders(projectName, projectDesc) {
+  const targets = [
+    'src/app/layout.tsx',
+    'src/app/page.tsx',
+    'CHANGELOG.md',
+    'README.md',
+    'project.mdc'
+  ];
+
+  targets.forEach(target => {
+    const filePath = path.join(PROJECT_ROOT, target);
+    if (fs.existsSync(filePath)) {
+      let content = fs.readFileSync(filePath, 'utf8');
+      content = content.replace(/\[PROJECT_NAME\]/g, projectName);
+      content = content.replace(/\[PROJECT_DESCRIPTION\]/g, projectDesc);
+      content = content.replace(/\[WIZARD_WILL_FILL_DATE\]/g, new Date().toISOString().split('T')[0]);
+      content = content.replace(/\[WIZARD_WILL_FILL_MODULES\]/g, 'Enabled core modules');
+      content = content.replace(/\[WIZARD_WILL_FILL\]/g, new Date().toISOString().split('T')[0]);
+      fs.writeFileSync(filePath, content);
+      log(`  ✅ ${target} placeholders purged`, COLORS.green);
+    }
+  });
 }
 
 // Update .env from .env.example
@@ -218,7 +235,7 @@ async function runWizard() {
   header('⚙️ APPLYING CONFIGURATION');
 
   updateConfig(projectName, projectDesc, modules);
-  updateProjectMdc(projectName, projectDesc);
+  purgePlaceholders(projectName, projectDesc);
   createEnvFile(dbName);
   updateCredentials('admin@example.com', 'admin123');
   createLock(projectName, modules);
