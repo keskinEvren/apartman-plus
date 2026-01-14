@@ -1,3 +1,12 @@
+---
+type: documentation
+agent_role: cursor_agent
+context_depth: 5
+required_knowledge: ["asanmod_core"]
+last_audited: "2026-01-14"
+critical: true
+---
+
 <!--
 ASANMOD v1.1.1 - CURSOR PROTOCOL
 -->

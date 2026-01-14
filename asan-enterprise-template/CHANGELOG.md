@@ -1,3 +1,11 @@
+---
+type: documentation
+agent_role: all
+context_depth: 2
+required_knowledge: ["asanmod_core"]
+last_audited: "2026-01-14"
+---
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

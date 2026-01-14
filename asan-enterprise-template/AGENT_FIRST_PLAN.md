@@ -1,3 +1,12 @@
+---
+type: task_list
+agent_role: all
+context_depth: 5
+required_knowledge: ["asanmod_core"]
+last_audited: "2026-01-14"
+critical: true
+---
+
 # 🤖 AGENT FIRST PLAN (Chronological Onboarding)
 
 > **Instructions for Agent:** Follow this plan strictly from top to bottom. Do not skip any steps. Mark tasks as complete as you progress.
