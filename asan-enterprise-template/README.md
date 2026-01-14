@@ -109,6 +109,13 @@ npm run seed             # Seed database with test data
 npm run create-admin     # Create admin user
 ```
 
+### Production & Deployment
+```bash
+npm run verify           # Quality check (lint+typecheck+build)
+npm run deploy-prod      # Safe production deployment
+npm run health           # System health check
+```
+
 ### PM2 (Production)
 ```bash
 ./scripts/mod-tools/pm dev status       # Check dev status

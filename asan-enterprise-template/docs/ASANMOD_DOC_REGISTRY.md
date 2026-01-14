@@ -61,6 +61,9 @@ VERSION: v2.0.1
 | **TOOL-003** | [`scripts/mod-tools/asan-init.js`](../scripts/mod-tools/asan-init.js) | **ACTIVE** | v2.0.1 | Project initialization |
 | **TOOL-004** | [`scripts/create-admin.ts`](../scripts/create-admin.ts) | **ACTIVE** | v2.0.1 | Admin user creation |
 | **TOOL-005** | [`scripts/seed.ts`](../scripts/seed.ts) | **ACTIVE** | v2.0.1 | Database seeding |
+| **TOOL-006** | [`scripts/mod-tools/verify.sh`](../scripts/mod-tools/verify.sh) | **ACTIVE** | v2.0.1 | Code quality verification |
+| **TOOL-007** | [`scripts/mod-tools/deploy-prod.sh`](../scripts/mod-tools/deploy-prod.sh) | **ACTIVE** | v2.0.1 | Production deployment |
+| **TOOL-008** | [`scripts/mod-tools/health-check.sh`](../scripts/mod-tools/health-check.sh) | **ACTIVE** | v2.0.1 | System health check |
 
 ---
 
