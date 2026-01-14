@@ -115,7 +115,7 @@
   },
   "_meta": {
     "schema": "1.1.1",
-    "generator": "ASANMOD Enterprise Template v2.1.1",
+    "generator": "ASANMOD Enterprise Template v2.2.0",
     "note": "This file is the single source of truth. Configure for your project."
   }
 }

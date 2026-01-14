@@ -44,4 +44,4 @@ critical: true
 4. **Iron Curtain:** Respect the isolation between DEV and PROD environments.
 5. **Manifest-First:** Always read `.asanmod/manifest.json` at startup to understand system state.
 
-*Verified by ASANMOD Governance v2.1.0-alpha*
+*Verified by ASANMOD Governance v2.2.0*
