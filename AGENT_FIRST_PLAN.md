@@ -67,5 +67,10 @@ Ask the user:
 4. **Commit Format**: Use `feat(scope): message` as enforced by Husky.
 5. **Iron Curtain**: Respect the isolation between DEV and PROD environments.
 6. **Manifest-First**: Always read `.asanmod/manifest.json` at startup to understand system state.
+7. **Strict Artifact Management**:
+   - **Technical Docs**: Save ONLY to `docs/`
+   - **Agent Audit/Reports**: Save ONLY to `docs/agents/`
+   - **Project Plans**: Save ONLY to `docs/plans/`
+   - **NEVER** write reports or internal logs to the root directory.
 
-*Verified by ASANMOD Governance v2.3.0*
+*Verified by ASANMOD Governance v3.0.0*
