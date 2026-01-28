@@ -60,4 +60,14 @@ Hedeflenen Özellikler:
 2.  **Frontend:** Apartman detay sayfası (`[id]/page.tsx`) kodlandı.
 3.  **Test:** "Test Plaza" içine "A Blok Daire 1" başarıyla eklendi.
 
+### ✅ Faz 2 (Bölüm C): Sakin Atama (Resident Assignment)
+**Tarih:** 28.01.2026
+**Commit:** `feat(resident): implement resident assignment`
+**Durum:** Tamamlandı
+
+1.  **Backend:** `user.search` endpoint'i eklendi (isim/email ile arama).
+2.  **Frontend:** Daire detayında "Sakin Ekle" butonu ve arama modülü yapıldı.
+3.  **Test:** "Demo User" başarıyla "A Blok Daire 1" dairesine "Kiracı" olarak atandı.
+
+
 

@@ -1,9 +1,24 @@
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
+  search: adminProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (!input.query || input.query.length < 2) return [];
+      return await ctx.db
+        .select()
+        .from(users)
+        .where(
+          or(
+            ilike(users.fullName, `%${input.query}%`),
+            ilike(users.email, `%${input.query}%`)
+          )
+        )
+        .limit(10);
+    }),
   getById: publicProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
