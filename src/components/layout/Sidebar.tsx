@@ -1,54 +1,105 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Users, Settings, FileText, BarChart } from "lucide-react";
+import {
+    Building2,
+    Home,
+    LogOut,
+    Megaphone,
+    Users,
+    Wallet,
+    Wrench
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/users", label: "Users", icon: Users },
-  { href: "/reports", label: "Reports", icon: BarChart },
-  { href: "/documents", label: "Documents", icon: FileText },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-
-interface SidebarProps {
-  className?: string;
+interface NavItem {
+  href: string;
+  label: string;
+  icon: any;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Basic role extraction from token or localStorage
+    // Ideally we decode JWT here or use a context
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Very basic mock decoding for MVP speed
+      // In production: jwt-decode
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setRole(payload.role);
+      } catch (e) {
+        console.error("Failed to decode token", e);
+      }
+    }
+  }, []);
+
+  const adminItems: NavItem[] = [
+    { href: "/dashboard", label: "Genel Bakış", icon: Home },
+    { href: "/dashboard/admin/apartments", label: "Apartmanlar", icon: Building2 },
+    { href: "/dashboard/finance", label: "Finans Yönetimi", icon: Wallet },
+    { href: "/dashboard/ops/tickets", label: "Arıza Talepleri", icon: Wrench },
+    { href: "/dashboard/admin/users", label: "Kullanıcılar", icon: Users },
+  ];
+
+  const residentItems: NavItem[] = [
+    { href: "/portal", label: "Ana Sayfa", icon: Home },
+    { href: "/portal/payments", label: "Ödemelerim", icon: Wallet },
+    { href: "/portal/requests", label: "Taleplerim", icon: Wrench },
+    { href: "/portal/announcements", label: "Duyurular", icon: Megaphone },
+  ];
+
+  const items = (role === "admin" || role === "super_admin") ? adminItems : residentItems;
 
   return (
     <aside
       className={cn(
-        "fixed left-0 top-14 z-30 h-[calc(100vh-3.5rem)] w-64 border-r bg-background",
+        "fixed left-0 top-14 z-30 h-[calc(100vh-3.5rem)] w-64 border-r bg-white text-slate-800",
         className
       )}
     >
-      <nav className="space-y-1 p-4">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <nav className="flex flex-col justify-between h-full p-4">
+        <div className="space-y-1">
+          {items.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-[#1A237E]/10 text-[#1A237E]"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="pt-4 border-t">
+           <button 
+             onClick={() => {
+               localStorage.removeItem("token");
+               document.cookie = "token=; path=/; max-age=0";
+               window.location.href = "/login";
+             }}
+             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+           >
+             <LogOut className="h-5 w-5" />
+             Çıkış Yap
+           </button>
+        </div>
       </nav>
     </aside>
   );

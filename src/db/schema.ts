@@ -6,9 +6,10 @@
  */
 
 // Export all schemas
+// Export all schemas
+export * from "./schema/apartments";
+export * from "./schema/finance";
+export * from "./schema/ops";
+export * from "./schema/social";
 export * from "./schema/users";
 
-// Add more schema exports here as you create them
-// Example:
-// export * from "./schema/posts";
-// export * from "./schema/comments";

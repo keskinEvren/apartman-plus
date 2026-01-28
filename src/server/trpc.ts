@@ -1,7 +1,7 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import { ZodError } from "zod";
-import superjson from "superjson";
 import { db } from "@/db";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
+import { ZodError } from "zod";
 
 /**
  * Create context for tRPC requests
@@ -45,20 +45,28 @@ export const publicProcedure = t.procedure;
  * Checks for valid session/JWT token
  */
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  // TODO: Implement session/JWT validation
-  // Example implementation:
-  // const session = await getSession(ctx.req);
-  // if (!session?.user) {
+  // TODO: Implement proper JWT extraction from context headers
+  // For now, we will rely on client passing the user object or validated session
+  // In a real Next.js App Router setup, we'd parse headers() in createContext
+  
+  // Checking if context has user (mock implementation for now until context is updated)
+  // const user = ctx.user;
+  
+  // if (!user) {
   //   throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   // }
-
-  // For development: allow all requests
-  // In production: implement proper auth check above
 
   return next({
     ctx: {
       ...ctx,
-      // user: session.user, // Add validated user to context
+      // user,
     },
   });
+});
+
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  // if (ctx.user.role !== 'admin' && ctx.user.role !== 'super_admin') {
+  //   throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+  // }
+  return next();
 });

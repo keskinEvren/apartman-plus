@@ -20,21 +20,21 @@ async function seed() {
     const testUsers = [
       {
         email: "admin@example.com",
-        name: "Admin User",
+        fullName: "Admin User",
         password: await hashPassword("admin123"),
-        role: "admin",
+        role: "admin" as const,
       },
       {
         email: "user@example.com",
-        name: "Test User",
+        fullName: "Test User",
         password: testPassword,
-        role: "user",
+        role: "resident" as const,
       },
       {
         email: "demo@example.com",
-        name: "Demo User",
+        fullName: "Demo User",
         password: testPassword,
-        role: "user",
+        role: "resident" as const,
       },
     ];
 

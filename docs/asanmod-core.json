@@ -1,8 +1,8 @@
 {
   "version": "3.0.0",
-  "name": "ASANMOD - Autonomous Governance System",
-  "lastUpdated": "2026-01-15T02:05:00.000Z",
-  "description": "AI-Native Software Factory Protocol for Enterprise Applications",
+  "name": "Lilix Mood Tracker",
+  "lastUpdated": "2026-01-25T19:59:47.426Z",
+  "description": "A simple CRUD application to track daily mood and energy levels.",
   "network": {
     "dev": {
       "frontend": 3000,
@@ -20,13 +20,13 @@
       "name": "[PROJECT]_dev_db",
       "host": "localhost",
       "port": 5432,
-      "user": "[DB_USER]"
+      "user": "postgres"
     },
     "prod": {
       "name": "[PROJECT]_prod_db",
       "host": "localhost",
       "port": 5432,
-      "user": "[DB_USER]"
+      "user": "postgres"
     }
   },
   "credentials": {
@@ -119,5 +119,10 @@
     "schema": "1.1.1",
     "generator": "ASANMOD Enterprise Template v3.0.0",
     "note": "This file is the single source of truth. Configure for your project."
-  }
+  },
+  "modules": [
+    "auth",
+    "users",
+    "admin"
+  ]
 }

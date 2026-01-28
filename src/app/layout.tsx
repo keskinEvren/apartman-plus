@@ -6,8 +6,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "[PROJECT_NAME]",
-  description: "[PROJECT_DESCRIPTION]",
+  title: "Lilix Mood Tracker",
+  description: "A simple CRUD application to track daily mood and energy levels.",
 };
 
 export default function RootLayout({

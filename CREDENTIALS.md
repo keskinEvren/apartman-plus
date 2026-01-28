@@ -14,7 +14,7 @@ last_audited: "2026-01-14"
 
 | Role  | Email              | Password           |
 | ----- | ------------------ | ------------------ |
-| Admin | [WIZARD_WILL_FILL] | [WIZARD_WILL_FILL] |
+| Admin | 2026-01-25 | 2026-01-25 |
 
 ## Database
 

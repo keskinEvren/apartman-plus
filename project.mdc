@@ -3,15 +3,15 @@ ASANMOD v3.0.0 - PROJECT CONTEXT
 ID: CONST-005
 STATUS: TEMPLATE
 TYPE: RULES
-LAST_UPDATED: [WIZARD_WILL_FILL]
+LAST_UPDATED: 2026-01-25
 VERSION: v3.0.0
 -->
 
-# [PROJECT_NAME] - ASANMOD PROJECT CONTEXT
+# Lilix Mood Tracker - ASANMOD PROJECT CONTEXT
 
 ## 📌 PROJECT IDENTITY
 
-- **App:** [PROJECT_NAME] ([PROJECT_DESCRIPTION])
+- **App:** Lilix Mood Tracker (A simple CRUD application to track daily mood and energy levels.)
 - **Stack:** Next.js 15 (App Router), tRPC, Drizzle ORM, PostgreSQL, TailwindCSS
 - **Governance:** ASANMOD v3.0.0
 
@@ -90,13 +90,13 @@ src/
 1. `read_file("docs/AGENT_QUICK_REF.md")`
 2. `read_file("docs/asanmod-core.json")`
 3. Check `.asanmod/installed.lock` exists
-4. Report: "**ASANMOD v3.0.0 ONLINE. Project: [PROJECT_NAME]**"
+4. Report: "**ASANMOD v3.0.0 ONLINE. Project: Lilix Mood Tracker**"
 
 ---
 
 ## 📋 PROJECT MODULES
 
-[WIZARD_WILL_FILL: List of enabled modules]
+auth, users, admin
 
 ## 🔐 CREDENTIALS
 

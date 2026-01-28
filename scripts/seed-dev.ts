@@ -1,6 +1,6 @@
+import bcrypt from 'bcryptjs';
 import { db } from '../src/db';
 import { users } from '../src/db/schema/users';
-import bcrypt from 'bcryptjs';
 
 async function seed() {
   console.log('🌱 Seeding development data...\n');
@@ -23,13 +23,15 @@ async function seed() {
     const [testUser, adminUser] = await db.insert(users).values([
       {
         email: 'test@example.com',
-        name: 'Test User',
+        fullName: 'Test User',
         password: hashedPassword,
+        role: 'resident',
       },
       {
         email: 'admin@example.com',
-        name: 'Admin User',
+        fullName: 'Admin User',
         password: hashedAdminPassword,
+        role: 'admin',
       },
     ]).returning();
 
