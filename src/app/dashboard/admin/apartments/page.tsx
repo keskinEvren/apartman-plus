@@ -2,6 +2,7 @@
 
 import { trpc } from "@/lib/trpc";
 import { Building2, Loader2, MapPin, Plus } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 export default function AdminApartmentsPage() {
@@ -121,8 +122,13 @@ export default function AdminApartmentsPage() {
             </div>
             
             <div className="mt-6 pt-4 border-t flex items-center justify-between text-sm">
-               <span className="text-gray-500">Daire sayısı: 0</span> {/* Placeholder for unit count */}
-               <span className="text-[#1A237E] font-medium group-hover:underline">Yönet &rarr;</span>
+               <span className="text-gray-500">Daire sayısı: ...</span> {/* Placeholder for unit count */}
+               <Link 
+                 href={`/dashboard/admin/apartments/${apt.id}`}
+                 className="text-[#1A237E] font-medium group-hover:underline flex items-center gap-1"
+               >
+                 Yönet &rarr;
+               </Link>
             </div>
           </div>
         ))}

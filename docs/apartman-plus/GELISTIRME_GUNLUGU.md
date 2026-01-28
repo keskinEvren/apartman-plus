@@ -51,3 +51,13 @@ Hedeflenen Özellikler:
 2.  **Frontend:** `/dashboard/admin/apartments` sayfası oluşturuldu.
 3.  **Test:** Tarayıcı otomasyonu ile "Test Plaza" isimli apartman başarıyla oluşturuldu ve doğrulandı.
 
+### ✅ Faz 2 (Bölüm B): Daire (Unit) Yönetimi
+**Tarih:** 28.01.2026
+**Commit:** `feat(unit): implement unit management`
+**Durum:** Tamamlandı
+
+1.  **Backend:** `apartment.get` ve `createUnit` fonksiyonları eklendi.
+2.  **Frontend:** Apartman detay sayfası (`[id]/page.tsx`) kodlandı.
+3.  **Test:** "Test Plaza" içine "A Blok Daire 1" başarıyla eklendi.
+
+

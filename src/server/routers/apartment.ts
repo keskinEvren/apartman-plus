@@ -10,6 +10,17 @@ export const apartmentRouter = router({
     return await ctx.db.select().from(apartments);
   }),
 
+  get: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.db
+        .select()
+        .from(apartments)
+        .where(eq(apartments.id, input.id))
+        .limit(1);
+      return result[0];
+    }),
+
   create: adminProcedure
     .input(
       z.object({
