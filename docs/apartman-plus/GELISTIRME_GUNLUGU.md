@@ -69,5 +69,15 @@ Hedeflenen Özellikler:
 2.  **Frontend:** Daire detayında "Sakin Ekle" butonu ve arama modülü yapıldı.
 3.  **Test:** "Demo User" başarıyla "A Blok Daire 1" dairesine "Kiracı" olarak atandı.
 
+### ✅ Faz 3 (Bölüm A): Aidat Şablonları & Borçlandırma
+**Tarih:** 28.01.2026
+**Commit:** `feat(finance): implement dues templates and bulk invoice`
+**Durum:** Tamamlandı
+
+1.  **Backend:** `finance` router eklendi (Şablon oluşturma, toplu borçlandırma).
+2.  **Frontend:** `/finance` sayfası ve Apartman Detayı entegrasyonu yapıldı.
+3.  **Test:** "2026 Genel Aidat" şablonu oluşturuldu ve tüm dairelere (1 adet) borç yansıtıldı.
+
+
 
 

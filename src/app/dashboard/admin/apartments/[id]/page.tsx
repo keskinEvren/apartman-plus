@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Home, Loader2, Plus, Search, UserPlus, Users } from "lucide-react";
+import { ArrowLeft, Building2, Home, Loader2, Plus, Search, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -17,7 +17,6 @@ export default function ApartmentDetailsPage() {
   // Assignment State
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  // Simple debounce logic
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const [assignmentForm, setAssignmentForm] = useState({ userId: "", userType: "tenant" as "owner" | "tenant" });
@@ -42,7 +41,7 @@ export default function ApartmentDetailsPage() {
 
   const assignUserMutation = trpc.apartment.assignUser.useMutation({
     onSuccess: () => {
-      utils.apartment.getUnits.invalidate(); // In a real app we'd fetch assignments too
+      utils.apartment.getUnits.invalidate();
       setSelectedUnitId(null);
       setSearchQuery("");
       setAssignmentForm({ userId: "", userType: "tenant" });
@@ -88,6 +87,19 @@ export default function ApartmentDetailsPage() {
           <h1 className="text-2xl font-bold text-[#1A237E]">{apartment.name}</h1>
           <p className="text-gray-500 text-sm">{apartment.address}</p>
         </div>
+      </div>
+
+      {/* Finance Overview Card */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link href={`/dashboard/admin/apartments/${apartmentId}/finance`} className="bg-gradient-to-br from-[#1A237E] to-[#283593] p-6 rounded-xl text-white shadow-lg hover:shadow-xl transition-all group">
+            <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <Building2 className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-lg">Finans Merkezi</h3>
+            </div>
+            <p className="text-indigo-100 text-sm">Aidat şablonları, borçlandırma ve kasa takibi.</p>
+        </Link>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
