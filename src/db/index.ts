@@ -11,12 +11,9 @@ declare global {
 }
 
 const getDb = (): DbClient => {
-  console.log("🔌 DB Init: NODE_ENV=", process.env.NODE_ENV);
-  console.log("🔌 DB Init: DB_INTERNAL=", process.env.DB_INTERNAL);
-  console.log("🔌 DB Init: DATABASE_URL=", process.env.DATABASE_URL);
-
-  // Use in-memory DB if NODE_ENV is test or if specifically requested via DB_INTERNAL
-  if (false && (process.env.NODE_ENV === "test" || process.env.DB_INTERNAL === "true")) {
+  // In production or when DB_INTERNAL is explicitly false, use real Postgres
+  // For tests, we might want to use pg-mem if configured
+  if (process.env.NODE_ENV === "test" && process.env.DB_INTERNAL === "true") {
     if (global.db) return global.db;
 
     const mem = newDb();
@@ -36,21 +33,10 @@ const getDb = (): DbClient => {
           updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
           deleted_at TIMESTAMP
         );
-        CREATE TABLE IF NOT EXISTS apartments (
-          id UUID PRIMARY KEY,
-          name TEXT NOT NULL,
-          address TEXT NOT NULL,
-          subscription_type TEXT DEFAULT 'standard' NOT NULL
-        );
         -- Add other mocks if needed for tests
       `);
-      /*
-        -- Insert a dummy user for the demo
-        INSERT INTO users (id, email, full_name, password, role) 
-        VALUES ('00000000-0000-0000-0000-000000000001', 'admin@example.com', 'Admin User', 'hashed_password', 'admin');
-      */
     } catch (e) {
-      process.stderr.write(`DB Init Warning: ${e}\n`);
+      // warning suppressed
     }
     
     const { Pool: MemPool } = mem.adapters.createPg();
