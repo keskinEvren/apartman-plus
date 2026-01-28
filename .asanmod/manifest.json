@@ -15,8 +15,11 @@
     "admin_created": false
   },
   "verification": {
-    "last_run": "2026-01-28T08:20:03.211Z",
+    "last_run": "2026-01-28T13:31:13.244Z",
     "gates_passed": [],
-    "gates_failed": []
+    "gates_failed": [
+      3,
+      6
+    ]
   }
 }

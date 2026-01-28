@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { units } from "../../db/schema/apartments";
-import { duesTemplates, invoices } from "../../db/schema/finance";
+import { duesTemplates, invoices, payments } from "../../db/schema/finance";
 import { adminProcedure, router } from "../trpc";
 
 export const financeRouter = router({
@@ -39,6 +39,23 @@ export const financeRouter = router({
     }),
 
   // --- Invoices (Borçlar) ---
+
+  getInvoices: adminProcedure
+    .input(z.object({ apartmentId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+       // Join invoices with units to get unit info
+       const results = await ctx.db
+         .select({
+            invoice: invoices,
+            unit: units,
+         })
+         .from(invoices)
+         .innerJoin(units, eq(invoices.unitId, units.id))
+         .where(eq(units.apartmentId, input.apartmentId))
+         .orderBy(desc(invoices.dueDate));
+       
+       return results;
+    }),
 
   // Generate Invoices from Template (Bulk Action)
   generateBulkInvoices: adminProcedure
@@ -86,5 +103,29 @@ export const financeRouter = router({
       await ctx.db.insert(invoices).values(newInvoices);
 
       return { success: true, count: newInvoices.length };
+    }),
+  // --- Payments (Tahsilat) ---
+
+  addPayment: adminProcedure
+    .input(z.object({
+        invoiceId: z.string().uuid(),
+        amount: z.string(),
+        method: z.enum(["cash", "bank_transfer", "credit_card"]),
+    }))
+    .mutation(async ({ ctx, input }) => {
+        // 1. Record payment
+        const [payment] = await ctx.db.insert(payments).values({
+            invoiceId: input.invoiceId,
+            amount: input.amount,
+            paymentMethod: input.method as "cash" | "bank_transfer" | "credit_card",
+        }).returning();
+
+        // 2. Update invoice status
+        await ctx.db
+          .update(invoices)
+          .set({ status: "paid" })
+          .where(eq(invoices.id, input.invoiceId));
+
+        return payment;
     }),
 });

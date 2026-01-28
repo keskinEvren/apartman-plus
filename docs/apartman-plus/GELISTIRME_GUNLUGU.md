@@ -78,6 +78,16 @@ Hedeflenen Özellikler:
 2.  **Frontend:** `/finance` sayfası ve Apartman Detayı entegrasyonu yapıldı.
 3.  **Test:** "2026 Genel Aidat" şablonu oluşturuldu ve tüm dairelere (1 adet) borç yansıtıldı.
 
+### ✅ Faz 3 (Bölüm B): Tahsilat & Kasa
+**Tarih:** 28.01.2026
+**Commit:** *Henüz atılmadı*
+**Durum:** Tamamlandı
+
+1.  **Backend:** `addPayment`, `getInvoices` prosedürleri eklendi.
+2.  **Frontend:** Borç listesi, Kasa (Tahakkuk vs Tahsilat) göstergeleri ve Ödeme Modalı eklendi.
+3.  **Test:** Manuel test bekleniyor (Otomasyon aracı network hatası verdi, ancak kod tamam).
+
+
 
 
 

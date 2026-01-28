@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-01-28T13:30:46Z",
+  "node_version": "v24.13.0",
+  "npm_version": "11.6.2",
+  "checks": {
+    "environment": "passed",
+    "lint": "passed",
+    "typescript": "failed",
+    "tests": "passed",
+    "security_audit": "warning",
+    "build": "failed"
+  },
+  "overall_status": "failed"
+}
