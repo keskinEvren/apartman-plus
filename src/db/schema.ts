@@ -9,6 +9,7 @@
 // Export all schemas
 export * from "./schema/apartments";
 export * from "./schema/finance";
+export * from "./schema/notifications";
 export * from "./schema/ops";
 export * from "./schema/social";
 export * from "./schema/users";

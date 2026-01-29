@@ -11,6 +11,8 @@ import { userRouter } from "./user";
  */
 import { authRouter } from "./auth";
 
+import { notificationsRouter } from "./notifications";
+
 export const appRouter = router({
   auth: authRouter,
   user: userRouter,
@@ -18,6 +20,7 @@ export const appRouter = router({
   finance: financeRouter,
   ops: opsRouter,
   social: socialRouter,
+  notifications: notificationsRouter,
 });
 
 export type AppRouter = typeof appRouter;
