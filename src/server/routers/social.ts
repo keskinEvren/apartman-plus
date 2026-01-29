@@ -5,12 +5,19 @@ import { adminProcedure, protectedProcedure, router } from "../trpc";
 
 export const socialRouter = router({
   getAnnouncements: protectedProcedure
-    .input(z.object({ apartmentId: z.string().uuid() }))
+    .input(z.object({ 
+      apartmentId: z.string().uuid(),
+      limit: z.number().min(1).max(100).nullish(), // Optional limit, safe default
+      cursor: z.string().nullish(), // For future infinite scroll support
+    }))
     .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50; // Default hard limit
+      
       return await ctx.db.select()
         .from(announcements)
         .where(eq(announcements.apartmentId, input.apartmentId))
-        .orderBy(desc(announcements.createdAt));
+        .orderBy(desc(announcements.createdAt))
+        .limit(limit);
     }),
 
   createAnnouncement: adminProcedure

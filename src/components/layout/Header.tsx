@@ -1,6 +1,6 @@
-import React from "react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { NotificationBell } from "../notifications/NotificationBell";
 
 interface HeaderProps {
   className?: string;
@@ -21,6 +21,9 @@ export function Header({ className }: HeaderProps) {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
+          <div className="flex items-center gap-2">
+             <NotificationBell />
+          </div>
           <nav className="flex items-center space-x-2">
             <Link
               href="/dashboard"

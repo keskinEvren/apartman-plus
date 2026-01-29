@@ -99,7 +99,35 @@ Hedeflenen Özellikler:
 ### ✅ Faz 3 (Bölüm D): Genel Kontrol & Temizlik
 **Durum:** Tamamlandı
 1.  `moods.test.ts` gibi eski "Mood Tracker" kalıntıları tespit edildi (silinmesi önerildi).
-2.  Tüm Finans modülü entegre edildi.
+### ✅ Faz 4: Operasyon ve İletişim (Operations & Social)
+**Tarih:** 29.01.2026
+**Commit:** *Hazırlanıyor*
+**Durum:** Tamamlandı
+
+1.  **Duyurular (Announcements):**
+    - Yönetici duyuru ekleyebiliyor (Başlık, İçerik).
+    - Duyurular tarih sırasına göre listeleniyor. [social.ts]
+2.  **Talepler (Requests / Tickets):**
+    - Sakinler arıza/şikayet kaydı oluşturabiliyor (Aciliyet, Kategori, Fotoğraf URL).
+    - Yöneticiler talepleri görüp statü (İşlemde, Çözüldü vb.) güncelleyebiliyor. [ops.ts]
+3.  **Dashboard:**
+    - "Duyurular" ve "Arıza & Talepler" kartları ana sayfaya eklendi.
+4.  **Altyapı:**
+    - `trpc.ts` üzerinde geliştirme ortamı için Mock Auth (otomatik admin girişi) aktif edildi.
+
+### ✅ Faz 5: Bildirim Merkezi (Notification Center)
+**Tarih:** 29.01.2026
+**Commit:** *Hazırlanıyor*
+**Durum:** Tamamlandı
+
+1.  **Veritabanı:** `notifications` tablosu ve migration eklendi.
+2.  **UI:** Header'da "Bildirim Zili" (Notification Bell) eklendi.
+    - Okunmamış sayısı rozeti (Badge).
+    - Canlı açılır liste (Dropdown).
+    - "Tümünü Okundu İşaretle" özelliği.
+3.  **Backend:** `getNotifications` (Limitli), `getUnreadCount`, `markAsRead` fonksiyonları eklendi.
+
+
 
 
 

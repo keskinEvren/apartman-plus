@@ -24,22 +24,24 @@ export const opsRouter = router({
     }),
 
   getTickets: protectedProcedure
-    .query(async ({ ctx }) => {
-      // If admin, return all. If resident, return own.
-      // Note: This logic depends on how 'admin' check is done. 
-      // Based on previous files, adminProcedure is separate.
-      // But here we might want a single endpoint with conditional logic or separate endpoints.
-      // For now, let's just return own tickets for protectedProcedure.
-      // Admin verification usually implies a separate procedure or a check.
-      
-      const is_admin = ctx.user.role === 'admin'; 
+    .input(z.object({
+      limit: z.number().min(1).max(100).nullish(),
+    }).optional())
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit ?? 50;
+      const is_admin = ctx.user.role === 'admin' || ctx.user.role === 'super_admin'; 
 
       if (is_admin) {
-           return await ctx.db.select().from(maintenanceTickets).orderBy(desc(maintenanceTickets.createdAt));
+           return await ctx.db.select()
+             .from(maintenanceTickets)
+             .orderBy(desc(maintenanceTickets.createdAt))
+             .limit(limit);
       } else {
-           return await ctx.db.select().from(maintenanceTickets)
+           return await ctx.db.select()
+             .from(maintenanceTickets)
              .where(eq(maintenanceTickets.requesterId, ctx.user.id))
-             .orderBy(desc(maintenanceTickets.createdAt));
+             .orderBy(desc(maintenanceTickets.createdAt))
+             .limit(limit);
       }
     }),
     
