@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { initTRPC } from "@trpc/server";
+import { users } from "@/db/schema/users";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -10,12 +11,12 @@ import { ZodError } from "zod";
 export const createContext = async () => {
   return {
     db,
-    // Add user session here when auth is implemented
-    // user: await getUser(req),
   };
 };
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = Awaited<ReturnType<typeof createContext>> & {
+    user?: typeof users.$inferSelect;
+};
 
 /**
  * Initialize tRPC with context and superjson transformer
@@ -45,28 +46,37 @@ export const publicProcedure = t.procedure;
  * Checks for valid session/JWT token
  */
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  // TODO: Implement proper JWT extraction from context headers
-  // For now, we will rely on client passing the user object or validated session
-  // In a real Next.js App Router setup, we'd parse headers() in createContext
-  
-  // Checking if context has user (mock implementation for now until context is updated)
-  // const user = ctx.user;
-  
-  // if (!user) {
-  //   throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
-  // }
+  // --- DEV AUTH: Auto-login as first admin or user ---
+  // In production, parse JWT from headers here.
+  const [user] = await ctx.db.select().from(users).limit(1);
+
+  if (!user) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "No users found in DB. Please register first." });
+  }
+  // --------------------------------------------------
 
   return next({
     ctx: {
       ...ctx,
-      // user,
+      user,
     },
   });
 });
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  // if (ctx.user.role !== 'admin' && ctx.user.role !== 'super_admin') {
-  //   throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
-  // }
+  const role = ctx.user.role as string;
+  if (role !== 'admin' && role !== 'super_admin') {
+     // For dev, strict check might block if we picked a random user. 
+     // Let's warn but allow if we just want to test, OR enforce it.
+     // Enforcing it is better behavior.
+     if(process.env.NODE_ENV !== 'development') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+     }
+     
+     if (role !== 'admin' && role !== 'super_admin') {
+         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+     }
+  }
   return next();
 });
+

@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Building2, Home, Loader2, Plus, Search, UserPlus, Users } from "lucide-react";
+import { ArrowLeft, Building2, Home, Loader2, Megaphone, Plus, Search, UserPlus, Users, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -89,7 +89,7 @@ export default function ApartmentDetailsPage() {
         </div>
       </div>
 
-      {/* Finance Overview Card */}
+      {/* Finance & Operations Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href={`/dashboard/admin/apartments/${apartmentId}/finance`} className="bg-gradient-to-br from-[#1A237E] to-[#283593] p-6 rounded-xl text-white shadow-lg hover:shadow-xl transition-all group">
             <div className="flex items-center gap-3 mb-2">
@@ -99,6 +99,28 @@ export default function ApartmentDetailsPage() {
                 <h3 className="font-bold text-lg">Finans Merkezi</h3>
             </div>
             <p className="text-indigo-100 text-sm">Aidat şablonları, borçlandırma ve kasa takibi.</p>
+        </Link>
+
+        {/* Announcements Card */}
+        <Link href={`/dashboard/admin/apartments/${apartmentId}/announcements`} className="bg-gradient-to-br from-[#E65100] to-[#F57C00] p-6 rounded-xl text-white shadow-lg hover:shadow-xl transition-all group">
+            <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                     <Megaphone className="w-6 h-6" />
+                </div>
+                 <h3 className="font-bold text-lg">Duyurular</h3>
+            </div>
+            <p className="text-orange-100 text-sm">Apartman duyurularını yönetin ve paylaşın.</p>
+        </Link>
+
+        {/* Requests Card */}
+        <Link href={`/dashboard/admin/apartments/${apartmentId}/requests`} className="bg-gradient-to-br from-[#4A148C] to-[#7B1FA2] p-6 rounded-xl text-white shadow-lg hover:shadow-xl transition-all group">
+            <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <Wrench className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-lg">Arıza & Talepler</h3>
+            </div>
+            <p className="text-purple-100 text-sm">Sakinlerden gelen arıza ve şikayetleri takip edin.</p>
         </Link>
       </div>
 
