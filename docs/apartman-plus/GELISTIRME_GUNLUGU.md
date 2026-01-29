@@ -87,6 +87,21 @@ Hedeflenen Özellikler:
 2.  **Frontend:** Borç listesi, Kasa (Tahakkuk vs Tahsilat) göstergeleri ve Ödeme Modalı eklendi.
 3.  **Test:** Manuel test bekleniyor (Otomasyon aracı network hatası verdi, ancak kod tamam).
 
+### ✅ Faz 3 (Bölüm C): Gider Yönetimi
+**Tarih:** 29.01.2026
+**Commit:** *Henüz atılmadı*
+**Durum:** Tamamlandı
+
+1.  **Backend:** `getExpenses`, `createExpense` prosedürleri eklendi. `expenses` tablosu şemaya dahil edildi.
+2.  **Frontend:** "Finans Merkezi" sayfası sekmeli yapıya dönüştürüldü ("Gelirler" / "Giderler").
+3.  **Özellik:** Gider ekleme formu ve gider listesi eklendi. "NET KASA" hesaplaması (Gelir - Gider) eklendi.
+
+### ✅ Faz 3 (Bölüm D): Genel Kontrol & Temizlik
+**Durum:** Tamamlandı
+1.  `moods.test.ts` gibi eski "Mood Tracker" kalıntıları tespit edildi (silinmesi önerildi).
+2.  Tüm Finans modülü entegre edildi.
+
+
 
 
 

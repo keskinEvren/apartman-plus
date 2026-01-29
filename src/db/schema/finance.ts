@@ -37,5 +37,27 @@ export const payments = pgTable("payments", {
   paidAt: timestamp("paid_at").defaultNow().notNull(),
 });
 
-export type Invoice = typeof invoices.$inferSelect;
-export type Payment = typeof payments.$inferSelect;
+export const expenseCategoryEnum = pgEnum("expense_category", [
+  "maintenance", // Bakım
+  "repair",      // Onarım
+  "cleaning",    // Temizlik
+  "electricity", // Elektrik
+  "water",       // Su
+  "personnel",   // Personel
+  "other"        // Diğer
+]);
+
+export const expenses = pgTable("expenses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  apartmentId: uuid("apartment_id")
+    .references(() => apartments.id)
+    .notNull(),
+  description: text("description").notNull(),
+  amount: numeric("amount").notNull(),
+  category: expenseCategoryEnum("category").notNull(),
+  date: timestamp("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type Expense = typeof expenses.$inferSelect;
+

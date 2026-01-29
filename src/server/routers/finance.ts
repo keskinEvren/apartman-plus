@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { units } from "../../db/schema/apartments";
-import { duesTemplates, invoices, payments } from "../../db/schema/finance";
+import { duesTemplates, expenseCategoryEnum, expenses, invoices, payments } from "../../db/schema/finance";
 import { adminProcedure, router } from "../trpc";
 
 export const financeRouter = router({
@@ -127,5 +127,40 @@ export const financeRouter = router({
           .where(eq(invoices.id, input.invoiceId));
 
         return payment;
+    }),
+  // --- Expenses (Giderler) ---
+
+  getExpenses: adminProcedure
+    .input(z.object({ apartmentId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(expenses)
+        .where(eq(expenses.apartmentId, input.apartmentId))
+        .orderBy(desc(expenses.date));
+    }),
+
+  createExpense: adminProcedure
+    .input(
+      z.object({
+        apartmentId: z.string().uuid(),
+        description: z.string().min(1),
+        amount: z.string(),
+        category: z.enum(expenseCategoryEnum.enumValues),
+        date: z.date(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [expense] = await ctx.db
+        .insert(expenses)
+        .values({
+          apartmentId: input.apartmentId,
+          description: input.description,
+          amount: input.amount,
+          category: input.category,
+          date: input.date,
+        })
+        .returning();
+      return expense;
     }),
 });
