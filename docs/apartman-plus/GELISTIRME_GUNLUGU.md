@@ -127,6 +127,18 @@ Hedeflenen Özellikler:
     - "Tümünü Okundu İşaretle" özelliği.
 3.  **Backend:** `getNotifications` (Limitli), `getUnreadCount`, `markAsRead` fonksiyonları eklendi.
 
+### 🔌 Faz 5.5: Entegrasyon ve Cila
+**Tarih:** 29.01.2026
+**Commit:** *Hazırlanıyor*
+**Durum:** Tamamlandı
+
+1.  **Güvenlik:**
+    - `trpc.ts` içindeki "Mock Auth" kodu kaldırıldı. Artık gerçek kullanıcı girişi (JWT) zorunlu.
+    - `createContext` fonksiyonu Header kontrolü yapacak şekilde güncellendi.
+2.  **Otomatik Bildirimler:**
+    - **Operasyon:** Talep durumu değişince (Admin -> Resolved vb.) talep sahibine otomatik bildirim gidiyor.
+    - **Sosyal:** Yeni duyuru paylaşılınca apartmandaki tüm sakinlere otomatik bildirim gidiyor.
+
 
 
 

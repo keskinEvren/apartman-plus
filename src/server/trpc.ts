@@ -1,6 +1,8 @@
 import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { initTRPC, TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -8,9 +10,10 @@ import { ZodError } from "zod";
  * Create context for tRPC requests
  * This runs for every request and provides context to all procedures
  */
-export const createContext = async () => {
+export const createContext = async (opts?: { req?: Request, headers?: Headers }) => {
   return {
     db,
+    headers: opts?.headers || opts?.req?.headers,
   };
 };
 
@@ -46,21 +49,37 @@ export const publicProcedure = t.procedure;
  * Checks for valid session/JWT token
  */
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  // --- DEV AUTH: Auto-login as first admin or user ---
-  // In production, parse JWT from headers here.
-  const [user] = await ctx.db.select().from(users).limit(1);
-
-  if (!user) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "No users found in DB. Please register first." });
+  const authHeader = ctx.headers?.get("authorization");
+  if (!authHeader) {
+     throw new TRPCError({ code: "UNAUTHORIZED", message: "No authorization header found" });
   }
-  // --------------------------------------------------
 
-  return next({
-    ctx: {
-      ...ctx,
-      user,
-    },
-  });
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+     throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token format" });
+  }
+
+  try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as { userId: string };
+      
+      const user = await ctx.db.query.users.findFirst({
+          where: eq(users.id, decoded.userId)
+      });
+
+      if (!user) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "User not found" });
+      }
+
+      return next({
+        ctx: {
+          ...ctx,
+          user,
+        },
+      });
+
+  } catch (err) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token" });
+  }
 });
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {

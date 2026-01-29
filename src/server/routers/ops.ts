@@ -1,5 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { notifications } from "../../db/schema/notifications";
 import { maintenanceTickets, ticketCategoryEnum, ticketUrgencyEnum } from "../../db/schema/ops";
 import { adminProcedure, protectedProcedure, router } from "../trpc";
 
@@ -51,9 +52,22 @@ export const opsRouter = router({
         status: z.enum(["open", "approved", "in_progress", "resolved", "cancelled"]),
     }))
     .mutation(async ({ ctx, input }) => {
-        return await ctx.db.update(maintenanceTickets)
+        const [ticket] = await ctx.db.update(maintenanceTickets)
             .set({ status: input.status, updatedAt: new Date() })
             .where(eq(maintenanceTickets.id, input.ticketId))
             .returning();
+
+        // Notify the requester
+        if (ticket) {
+            await ctx.db.insert(notifications).values({
+                userId: ticket.requesterId,
+                title: "Talep Güncellemesi",
+                message: `Talep durumu güncellendi: ${input.status}`,
+                type: "info",
+                link: `/dashboard/resident/requests` // Assuming resident implementation
+            });
+        }
+        
+        return ticket;
     }),
 });
