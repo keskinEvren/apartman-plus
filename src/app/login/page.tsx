@@ -24,12 +24,8 @@ export default function LoginPage() {
       localStorage.setItem("token", data.token);
       document.cookie = `token=${data.token}; path=/; max-age=86400`; // 1 day
 
-      // Redirect based on role
-      if (data.user.role === "admin" || data.user.role === "super_admin") {
-        router.push("/dashboard");
-      } else {
-        router.push("/portal"); // Resident portal
-      }
+      // Redirect to dashboard (dispatcher will handle roles)
+      router.push("/dashboard");
     },
     onError: (err) => {
       setError(err.message || "Giriş başarısız oldu. Lütfen tekrar deneyin.");

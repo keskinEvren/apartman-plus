@@ -18,7 +18,7 @@ export default function AdminApartmentsPage() {
       setIsCreating(false);
       setFormData({ name: "", address: "" });
     },
-    onError: (err) => {
+    onError: (err: { message: string }) => {
       setError(err.message);
     }
   });
@@ -29,6 +29,8 @@ export default function AdminApartmentsPage() {
     createMutation.mutate(formData);
   };
 
+  const { data: user } = trpc.user.me.useQuery();
+
   if (apartmentsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -37,6 +39,8 @@ export default function AdminApartmentsPage() {
     );
   }
 
+  const isSuperAdmin = user?.role === 'super_admin';
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -44,13 +48,15 @@ export default function AdminApartmentsPage() {
           <h1 className="text-2xl font-bold text-[#1A237E]">Apartman Yönetimi</h1>
           <p className="text-gray-600">Sistemdeki apartman ve siteleri yönetin.</p>
         </div>
-        <button
-          onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 bg-[#2ECC71] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#27ae60] transition-colors shadow-sm"
-        >
-          <Plus className="w-5 h-5" />
-          Yeni Apartman Ekle
-        </button>
+        {isSuperAdmin && (
+          <button
+            onClick={() => setIsCreating(true)}
+            className="flex items-center gap-2 bg-[#2ECC71] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#27ae60] transition-colors shadow-sm"
+          >
+            <Plus className="w-5 h-5" />
+            Yeni Apartman Ekle
+          </button>
+        )}
       </div>
 
       {isCreating && (
@@ -137,13 +143,19 @@ export default function AdminApartmentsPage() {
           <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
             <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <h3 className="text-lg font-medium text-gray-900">Henüz apartman yok</h3>
-            <p className="text-gray-500 mb-4">Sistemi kullanmaya başlamak için ilk apartmanınızı ekleyin.</p>
-            <button
-              onClick={() => setIsCreating(true)}
-              className="text-[#1A237E] font-medium hover:underline"
-            >
-              Şimdi Oluştur
-            </button>
+            <p className="text-gray-500 mb-4">
+               {isSuperAdmin 
+                  ? "Sistemi kullanmaya başlamak için ilk apartmanınızı ekleyin." 
+                  : "Henüz atanmış bir apartmanınız bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçin."}
+            </p>
+            {isSuperAdmin && (
+              <button
+                onClick={() => setIsCreating(true)}
+                className="text-[#1A237E] font-medium hover:underline"
+              >
+                Şimdi Oluştur
+              </button>
+            )}
           </div>
         )}
       </div>

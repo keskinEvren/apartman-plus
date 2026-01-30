@@ -6,6 +6,7 @@ import {
     Home,
     LogOut,
     Megaphone,
+    Settings,
     Users,
     Wallet,
     Wrench
@@ -44,15 +45,15 @@ export function Sidebar({ className }: { className?: string }) {
     { href: "/dashboard", label: "Genel Bakış", icon: Home },
     { href: "/dashboard/admin/apartments", label: "Apartmanlar", icon: Building2 },
     { href: "/dashboard/finance", label: "Finans Yönetimi", icon: Wallet },
-    { href: "/dashboard/ops/tickets", label: "Arıza Talepleri", icon: Wrench },
+    { href: "/dashboard/admin/requests", label: "Arıza Talepleri", icon: Wrench },
+    { href: "/dashboard/admin/announcements", label: "Duyurular", icon: Megaphone },
     { href: "/dashboard/admin/users", label: "Kullanıcılar", icon: Users },
   ];
 
   const residentItems: NavItem[] = [
-    { href: "/portal", label: "Ana Sayfa", icon: Home },
-    { href: "/portal/payments", label: "Ödemelerim", icon: Wallet },
-    { href: "/portal/requests", label: "Taleplerim", icon: Wrench },
-    { href: "/portal/announcements", label: "Duyurular", icon: Megaphone },
+    { href: "/dashboard/resident/announcements", label: "Duyurular", icon: Megaphone },
+    { href: "/dashboard/resident/requests", label: "Taleplerim", icon: Wrench },
+    { href: "/dashboard/resident/payments", label: "Ödemelerim", icon: Wallet },
   ];
 
   const items = (role === "admin" || role === "super_admin") ? adminItems : residentItems;
@@ -87,7 +88,19 @@ export function Sidebar({ className }: { className?: string }) {
           })}
         </div>
 
-        <div className="pt-4 border-t">
+        <div className="pt-4 border-t space-y-1">
+           <Link
+             href="/dashboard/settings"
+             className={cn(
+               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+               pathname === "/dashboard/settings"
+                 ? "bg-[#1A237E]/10 text-[#1A237E]"
+                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+             )}
+           >
+             <Settings className="h-5 w-5" />
+             Ayarlar
+           </Link>
            <button 
              onClick={() => {
                localStorage.removeItem("token");

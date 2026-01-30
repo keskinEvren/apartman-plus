@@ -62,9 +62,10 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as { userId: string };
       
-      const user = await ctx.db.query.users.findFirst({
-          where: eq(users.id, decoded.userId)
-      });
+      const [user] = await ctx.db.select()
+        .from(users)
+        .where(eq(users.id, decoded.userId))
+        .limit(1);
 
       if (!user) {
           throw new TRPCError({ code: "UNAUTHORIZED", message: "User not found" });
@@ -78,6 +79,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
       });
 
   } catch (err) {
+      console.log("DEBUG AUTH ERROR:", err);
       throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token" });
   }
 });
@@ -85,17 +87,18 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const role = ctx.user.role as string;
   if (role !== 'admin' && role !== 'super_admin') {
-     // For dev, strict check might block if we picked a random user. 
-     // Let's warn but allow if we just want to test, OR enforce it.
-     // Enforcing it is better behavior.
-     if(process.env.NODE_ENV !== 'development') {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
-     }
-     
-     if (role !== 'admin' && role !== 'super_admin') {
-         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
-     }
+      throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
   }
   return next();
 });
+
+// Super Admin only procedure
+export const superAdminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const role = ctx.user.role as string;
+  if (role !== 'super_admin') {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Super Admin access required" });
+  }
+  return next();
+});
+
 

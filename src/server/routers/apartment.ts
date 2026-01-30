@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { apartments, unitAssignments, units } from "../../db/schema/apartments";
-import { adminProcedure, protectedProcedure, router } from "../trpc";
+import { adminProcedure, protectedProcedure, router, superAdminProcedure } from "../trpc";
 
 export const apartmentRouter = router({
   // --- Apartments ---
@@ -21,7 +21,7 @@ export const apartmentRouter = router({
       return result[0];
     }),
 
-  create: adminProcedure
+  create: superAdminProcedure
     .input(
       z.object({
         name: z.string().min(1),

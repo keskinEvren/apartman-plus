@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { units } from "../../db/schema/apartments";
+import { unitAssignments, units } from "../../db/schema/apartments";
 import { notifications } from "../../db/schema/notifications";
 import { announcements } from "../../db/schema/social";
 import { adminProcedure, protectedProcedure, router } from "../trpc";
@@ -46,17 +46,21 @@ export const socialRouter = router({
         
         // Note: Complex joins might be needed. Let's do a raw SQL or separate queries for MVP simplicity and safety.
         // Step 1: Get all unit IDs in this apartment
-        const apartmentUnits = await ctx.db.query.units.findMany({
-            where: eq(units.apartmentId, input.apartmentId),
-            with: {
-                assignments: true
-            }
-        });
+        // Step 1: Get all unit IDs in this apartment
+        // Replaced db.query with db.select for generic compatibility
+        
+        const apartmentUnits = await ctx.db.select({
+            unitId: units.id,
+            userId: unitAssignments.userId
+        })
+        .from(units)
+        .leftJoin(unitAssignments, eq(unitAssignments.unitId, units.id))
+        .where(eq(units.apartmentId, input.apartmentId));
 
         const userIdsToNotify = new Set<string>();
-        for (const unit of apartmentUnits) {
-            for (const assignment of unit.assignments) {
-                userIdsToNotify.add(assignment.userId);
+        for (const record of apartmentUnits) {
+            if (record.userId) {
+                userIdsToNotify.add(record.userId);
             }
         }
 

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { z } from "zod";
+import { trpc } from "@/lib/trpc";
 import { emailSchema, passwordSchema } from "@/lib/validation";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { z } from "zod";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -25,6 +26,16 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const registerMutation = trpc.auth.register.useMutation({
+    onSuccess: () => {
+      router.push("/login");
+    },
+    onError: (err: any) => {
+      setError(err.message);
+      setLoading(false);
+    }
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -34,17 +45,20 @@ export default function RegisterPage() {
       // Validate
       registerSchema.parse({ name, email, password, confirmPassword });
 
-      // TODO: Call register mutation when auth router exists
-      console.log("Register attempt:", { name, email });
-      router.push("/login");
+      // Call register mutation
+      registerMutation.mutate({
+        email,
+        password,
+        fullName: name,
+        role: "resident" // Default role
+      });
     } catch (err) {
+      setLoading(false); // Ensure loading is reset on validation error
       if (err instanceof z.ZodError) {
         setError(err.errors[0].message);
       } else {
         setError("Registration failed. Please try again.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
