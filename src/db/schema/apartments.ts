@@ -30,6 +30,31 @@ export const unitAssignments = pgTable("unit_assignments", {
   userType: userTypeEnum("user_type").notNull(),
 });
 
+import { relations } from "drizzle-orm";
+
+export const apartmentsRelations = relations(apartments, ({ many }) => ({
+    units: many(units),
+}));
+
+export const unitsRelations = relations(units, ({ one, many }) => ({
+    apartment: one(apartments, {
+        fields: [units.apartmentId],
+        references: [apartments.id],
+    }),
+    assignments: many(unitAssignments),
+}));
+
+export const unitAssignmentsRelations = relations(unitAssignments, ({ one }) => ({
+    unit: one(units, {
+        fields: [unitAssignments.unitId],
+        references: [units.id],
+    }),
+    user: one(users, {
+        fields: [unitAssignments.userId],
+        references: [users.id],
+    }),
+}));
+
 export type Apartment = typeof apartments.$inferSelect;
 export type Unit = typeof units.$inferSelect;
 export type UnitAssignment = typeof unitAssignments.$inferSelect;
