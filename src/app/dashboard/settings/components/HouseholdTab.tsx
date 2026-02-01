@@ -67,24 +67,25 @@ export function HouseholdTab() {
                 addVehicle.mutate(vehicleForm);
                 setVehicleForm({ plateNumber: "", model: "" });
             }}
-            className="flex gap-2"
+            className="flex flex-col md:flex-row gap-2"
         >
             <input 
                 placeholder="Plaka (34 AB 123)" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={vehicleForm.plateNumber}
                 onChange={e => setVehicleForm({...vehicleForm, plateNumber: e.target.value})}
                 required
             />
             <input 
                 placeholder="Model (Beyaz Ford)" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={vehicleForm.model}
                 onChange={e => setVehicleForm({...vehicleForm, model: e.target.value})}
                 required
             />
-            <button disabled={addVehicle.isPending} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700">
+            <button disabled={addVehicle.isPending} className="bg-indigo-600 text-white p-3 md:p-2 rounded-lg hover:bg-indigo-700 flex justify-center items-center">
                 <Plus className="w-5 h-5" />
+                <span className="md:hidden ml-2 font-medium">Ekle</span>
             </button>
         </form>
       </section>
@@ -107,7 +108,7 @@ export function HouseholdTab() {
                     </div>
                     <button 
                         onClick={() => deletePet.mutate({ id: pet.id })}
-                        className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-red-400 hover:text-red-600 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -121,10 +122,10 @@ export function HouseholdTab() {
                 addPet.mutate({ ...petForm, type: petForm.type as any });
                 setPetForm({ name: "", type: "DOG", description: "" });
             }}
-            className="flex gap-2"
+            className="flex flex-col md:flex-row gap-2"
         >
              <select 
-                className="border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={petForm.type}
                 onChange={e => setPetForm({...petForm, type: e.target.value as any})}
             >
@@ -135,19 +136,20 @@ export function HouseholdTab() {
             </select>
             <input 
                 placeholder="İsim (Pamuk)" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={petForm.name}
                 onChange={e => setPetForm({...petForm, name: e.target.value})}
                 required
             />
              <input 
                 placeholder="Cins/Renk" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={petForm.description}
                 onChange={e => setPetForm({...petForm, description: e.target.value})}
             />
-            <button disabled={addPet.isPending} className="bg-orange-500 text-white p-2 rounded-lg hover:bg-orange-600">
+            <button disabled={addPet.isPending} className="bg-orange-500 text-white p-3 md:p-2 rounded-lg hover:bg-orange-600 flex justify-center items-center">
                 <Plus className="w-5 h-5" />
+                <span className="md:hidden ml-2 font-medium">Ekle</span>
             </button>
         </form>
       </section>
@@ -170,7 +172,7 @@ export function HouseholdTab() {
                     </div>
                     <button 
                         onClick={() => deleteContact.mutate({ id: contact.id })}
-                        className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-red-400 hover:text-red-600 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -184,31 +186,32 @@ export function HouseholdTab() {
                 addContact.mutate(contactForm);
                 setContactForm({ name: "", phoneNumber: "", relation: "" });
             }}
-            className="flex gap-2"
+            className="flex flex-col md:flex-row gap-2"
         >
             <input 
                 placeholder="Ad Soyad" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={contactForm.name}
                 onChange={e => setContactForm({...contactForm, name: e.target.value})}
                 required
             />
             <input 
                 placeholder="Tel (05...)" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={contactForm.phoneNumber}
                 onChange={e => setContactForm({...contactForm, phoneNumber: e.target.value})}
                 required
             />
             <input 
                 placeholder="Yakınlık (Anne)" 
-                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100"
+                className="border p-2 rounded-lg text-sm flex-1 outline-none focus:ring-2 focus:ring-indigo-100 bg-white"
                 value={contactForm.relation}
                 onChange={e => setContactForm({...contactForm, relation: e.target.value})}
                 required
             />
-            <button disabled={addContact.isPending} className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600">
+            <button disabled={addContact.isPending} className="bg-red-500 text-white p-3 md:p-2 rounded-lg hover:bg-red-600 flex justify-center items-center">
                 <Plus className="w-5 h-5" />
+                <span className="md:hidden ml-2 font-medium">Ekle</span>
             </button>
         </form>
       </section>

@@ -1,4 +1,7 @@
 #!/usr/bin/env tsx
+import { loadEnvFile } from "process";
+try { loadEnvFile(); } catch (e) {}
+
 /**
  * Create Admin User Script
  *

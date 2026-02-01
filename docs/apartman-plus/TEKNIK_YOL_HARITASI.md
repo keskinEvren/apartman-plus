@@ -33,7 +33,7 @@ Aşağıda her bir modül için kod incelemesi ve sektör standartlarına dayal�
 1.  **2FA (İki Faktörlü Doğrulama):** Yönetici hesapları için zorunlu SMS veya Authenticator app desteği. Finansal verilerin güvenliği için kritiktir.
 2.  **Oturum Geçmişi (Audit Logs):** "Hesabıma en son kim, nereden girdi?" sorusu için IP ve cihaz kaydı tutulmalı.
 3.  **Davetiye Sistemi:** Yöneticilerin e-posta ile sakinlere "siteye katılma linki" göndermesi. Şu anki kod tabanında manuel ekleme var gibi görünüyor.
-4.  **Profil Zenginleştirme:** Sakinlerin araç plakası, evcil hayvan bilgisi gibi site yönetimi için önemli detayları profillerine ekleyebilmesi.
+4.  **Profil Zenginleştirme:** Sakinlerin araç plakası, evcil hayvan bilgisi gibi site yönetimi için önemli detayları profillerine ekleyebilmesi.(Yapıldı)
 
 ---
 

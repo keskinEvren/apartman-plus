@@ -3,8 +3,8 @@
 import { trpc } from "@/lib/trpc";
 import { emailSchema, passwordSchema } from "@/lib/validation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -17,8 +17,13 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
-export default function RegisterPage() {
+import { Suspense } from "react";
+
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +31,24 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Fetch invitation details if token exists
+  const { data: invitation, isLoading: isCheckingInvite } = trpc.invitation.getDetails.useQuery(
+    { token: token! }, 
+    { 
+        enabled: !!token,
+        retry: false
+    }
+  );
+
+  useEffect(() => {
+    if (invitation) {
+        setEmail(invitation.email);
+    }
+  }, [invitation]);
+
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
-      router.push("/login");
+      router.push("/login?registered=true");
     },
     onError: (err: any) => {
       setError(err.message);
@@ -50,10 +70,11 @@ export default function RegisterPage() {
         email,
         password,
         fullName: name,
-        role: "resident" // Default role
+        role: "resident", // Backed will override if token exists
+        invitationToken: token || undefined
       });
     } catch (err) {
-      setLoading(false); // Ensure loading is reset on validation error
+        setLoading(false);
       if (err instanceof z.ZodError) {
         setError(err.errors[0].message);
       } else {
@@ -62,10 +83,16 @@ export default function RegisterPage() {
     }
   };
 
+  if (token && isCheckingInvite) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-100">Loading invitation...</div>;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Register</h1>
+        <h1 className="text-2xl font-bold mb-6">
+            {invitation ? "Davetiye ile Kayıt Ol" : "Register"}
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -97,8 +124,9 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 disabled:bg-gray-100 disabled:text-gray-500"
               required
+              disabled={!!invitation}
             />
           </div>
 
@@ -150,5 +178,13 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

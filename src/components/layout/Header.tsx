@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { NotificationBell } from "../notifications/NotificationBell";
@@ -6,7 +8,12 @@ interface HeaderProps {
   className?: string;
 }
 
+import { Menu } from "lucide-react";
+import { useSidebar } from "./SidebarContext";
+
 export function Header({ className }: HeaderProps) {
+  const { toggle } = useSidebar();
+
   return (
     <header
       className={cn(
@@ -15,9 +22,15 @@ export function Header({ className }: HeaderProps) {
       )}
     >
       <div className="container flex h-14 items-center">
+        <button
+          onClick={toggle}
+          className="mr-4 md:hidden p-2 hover:bg-slate-100 rounded-md"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold text-xl">🚀 [PROJECT]</span>
+            <span className="font-bold text-xl">🚀 Apartman Plus</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">

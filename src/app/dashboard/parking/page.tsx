@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/lib/trpc";
-import { Car, Search, Phone, User } from "lucide-react";
+import { Car, Phone, Search, User } from "lucide-react";
 import React, { useState } from "react";
 
 export default function ParkingPage() {
@@ -16,7 +16,7 @@ export default function ParkingPage() {
     return () => clearTimeout(timer);
   }, [plateQuery]);
 
-  const { data: results, isLoading, error } = trpc.profile.searchPlate.useMutation();
+
   const searchMut = trpc.profile.searchPlate.useMutation();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -40,19 +40,19 @@ export default function ParkingPage() {
 
       {/* Search Bar */}
       <div className="bg-white p-6 rounded-xl border shadow-sm">
-        <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
+        <form onSubmit={handleSearch} className="relative max-w-xl mx-auto flex flex-col md:block">
             <input 
                 type="text" 
                 placeholder="Plaka Giriniz (Örn: 34 AB 123)" 
-                className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all uppercase placeholder:normal-case"
+                className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all uppercase placeholder:normal-case mb-3 md:mb-0"
                 value={plateQuery}
                 onChange={(e) => setPlateQuery(e.target.value.toUpperCase())}
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
+            <Search className="absolute left-4 top-4 md:top-1/2 md:-translate-y-1/2 text-gray-400 w-6 h-6" />
             <button 
                 type="submit"
                 disabled={plateQuery.length < 3 || searchMut.isPending}
-                className="absolute right-2 top-2 bottom-2 bg-indigo-600 text-white px-6 rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+                className="w-full md:w-auto md:absolute md:right-2 md:top-2 md:bottom-2 bg-indigo-600 text-white px-6 py-3 md:py-0 rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
             >
                 {searchMut.isPending ? "Aranıyor..." : "Sorgula"}
             </button>
@@ -117,7 +117,7 @@ export default function ParkingPage() {
         </div>
         <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl text-sm text-purple-800">
             <strong className="block mb-1">Bilgi Güncelleme</strong>
-            Kendi araç bilginizi "Ayarlar > Hane Bilgileri" menüsünden güncelleyebilirsiniz.
+            Kendi araç bilginizi &quot;Ayarlar &gt; Hane Bilgileri&quot; menüsünden güncelleyebilirsiniz.
         </div>
       </div>
     </div>

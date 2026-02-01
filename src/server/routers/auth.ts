@@ -15,12 +15,14 @@ export const authRouter = router({
         password: z.string().min(6),
         fullName: z.string().min(2),
         phoneNumber: z.string().optional(),
-        role: z.enum(["super_admin", "admin", "resident", "security"]).optional()
+        role: z.enum(["super_admin", "admin", "resident", "security"]).optional(),
+        invitationToken: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { email, password, fullName, phoneNumber, role } = input;
+      const { email, password, fullName, phoneNumber, role, invitationToken } = input;
 
+      // 1. Check if user already exists
       const existingUser = await db.query.users.findFirst({
         where: eq(users.email, email),
       });
@@ -32,6 +34,40 @@ export const authRouter = router({
         });
       }
 
+      let finalRole = role || "resident";
+      
+      // 2. Handle Invitation
+      if (invitationToken) {
+        const { invitations } = await import("@/db/schema/invitations");
+        const { and, eq } = await import("drizzle-orm");
+        
+        const invite = await db.query.invitations.findFirst({
+            where: and(
+                eq(invitations.token, invitationToken),
+                eq(invitations.status, "pending")
+            )
+        });
+
+        if (!invite) {
+             throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired invitation" });
+        }
+
+        if (new Date() > invite.expiresAt) {
+             throw new TRPCError({ code: "BAD_REQUEST", message: "Invitation expired" });
+        }
+        
+        if (invite.email !== email) {
+             throw new TRPCError({ code: "BAD_REQUEST", message: "Email does not match invitation" });
+        }
+
+        finalRole = invite.role as any;
+        
+        // Mark as accepted
+        await db.update(invitations)
+            .set({ status: "accepted" })
+            .where(eq(invitations.id, invite.id));
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const [user] = await db
@@ -41,7 +77,7 @@ export const authRouter = router({
           password: hashedPassword,
           fullName,
           phoneNumber,
-          role: role || "resident",
+          role: finalRole as any,
         })
         .returning();
 

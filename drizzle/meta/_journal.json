@@ -15,6 +15,20 @@
       "when": 1769691629980,
       "tag": "0001_aromatic_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769935464647,
+      "tag": "0002_mean_catseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769945705921,
+      "tag": "0003_concerned_miracleman",
+      "breakpoints": true
     }
   ]
 }
