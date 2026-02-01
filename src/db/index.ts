@@ -1,7 +1,7 @@
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { DataType, newDb } from "pg-mem";
-import * as schema from "./schema";
+import * as schema from "./schema/index";
 
 export type DbClient = NodePgDatabase<typeof schema>;
 
@@ -111,6 +111,33 @@ const getDb = (): DbClient => {
             "photo_url" text,
             "created_at" timestamp DEFAULT now() NOT NULL,
             "updated_at" timestamp DEFAULT now() NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS "vehicles" (
+            "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            "user_id" uuid NOT NULL REFERENCES "users"("id"),
+            "plate_number" text NOT NULL,
+            "model" text NOT NULL,
+            "verified" boolean DEFAULT false NOT NULL,
+            "created_at" timestamp DEFAULT now() NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS "pets" (
+            "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            "user_id" uuid NOT NULL REFERENCES "users"("id"),
+            "type" text NOT NULL,
+            "name" text NOT NULL,
+            "description" text,
+            "created_at" timestamp DEFAULT now() NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS "emergency_contacts" (
+            "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            "user_id" uuid NOT NULL REFERENCES "users"("id"),
+            "name" text NOT NULL,
+            "phone_number" text NOT NULL,
+            "relation" text NOT NULL,
+            "created_at" timestamp DEFAULT now() NOT NULL
         );
       `);
     } catch (e) {

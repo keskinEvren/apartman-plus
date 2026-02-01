@@ -138,6 +138,11 @@ Hedeflenen Özellikler:
 2.  **Otomatik Bildirimler:**
     - **Operasyon:** Talep durumu değişince (Admin -> Resolved vb.) talep sahibine otomatik bildirim gidiyor.
     - **Sosyal:** Yeni duyuru paylaşılınca apartmandaki tüm sakinlere otomatik bildirim gidiyor.
+3.  **Derin Linkleme (Deep Linking):**
+    - Bildirimler artık ilgili sayfaya yönlendiriyor (Akıllı Yönlendirme).
+    - Yeni fatura -> `/dashboard/resident/finance`
+    - Yeni duyuru -> `/dashboard/resident/announcements`
+    - Talep güncellemesi -> `/dashboard/resident/requests`
 
 
 

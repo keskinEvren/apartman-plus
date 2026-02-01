@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import {
     Building2,
+    Car,
     Home,
     LogOut,
     Megaphone,
@@ -54,6 +55,7 @@ export function Sidebar({ className }: { className?: string }) {
     { href: "/dashboard/resident/announcements", label: "Duyurular", icon: Megaphone },
     { href: "/dashboard/resident/requests", label: "Taleplerim", icon: Wrench },
     { href: "/dashboard/resident/payments", label: "Ödemelerim", icon: Wallet },
+    { href: "/dashboard/parking", label: "Otopark", icon: Car },
   ];
 
   const items = (role === "admin" || role === "super_admin") ? adminItems : residentItems;

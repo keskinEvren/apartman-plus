@@ -7,10 +7,13 @@ import { tr } from "date-fns/locale";
 import { Edit2, Search, Trash2, UserCog } from "lucide-react";
 import React, { useState } from "react";
 
+import { AdminHouseholdView } from "./components/AdminHouseholdView";
+
 export default function AdminUsersPage() {
   const utils = trpc.useUtils();
   const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [viewingHouseholdUser, setViewingHouseholdUser] = useState<{id: string, name: string} | null>(null);
 
   const { data: users, isLoading } = trpc.user.getAll.useQuery();
   const { data: currentUser } = trpc.user.me.useQuery();
@@ -106,18 +109,26 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end gap-2">
+                    <button 
+                         onClick={() => setViewingHouseholdUser({id: user.id, name: user.fullName})}
+                         className="text-gray-500 hover:text-indigo-600 bg-gray-50 p-2 rounded-lg hover:bg-indigo-50 transition-colors"
+                         title="Hane Bilgilerini Görüntüle"
+                     >
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+
                     {currentUser?.role === 'super_admin' && (
                       <>
                         <button 
                           onClick={() => setEditingUser(user)}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-indigo-600 hover:text-indigo-900 p-2 hover:bg-indigo-50 rounded-lg"
                           title="Rolü Düzenle"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(user.id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg"
                           title="Kullanıcıyı Sil"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -167,6 +178,15 @@ export default function AdminUsersPage() {
                </form>
            </div>
         </div>
+      )}
+
+      {/* Household View Modal */}
+      {viewingHouseholdUser && (
+          <AdminHouseholdView 
+              userId={viewingHouseholdUser.id} 
+              userName={viewingHouseholdUser.name} 
+              onClose={() => setViewingHouseholdUser(null)} 
+          />
       )}
     </div>
   );

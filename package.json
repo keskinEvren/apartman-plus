@@ -28,12 +28,14 @@
     "restore": "bash scripts/restore-db.sh",
     "reset-dev": "bash scripts/reset-dev.sh",
     "health": "bash scripts/mod-tools/health-check.sh",
+    "status": "npm run health",
     "verify": "bash scripts/mod-tools/verify.sh",
     "doctor": "node scripts/mod-tools/doctor.js",
     "bump": "node scripts/mod-tools/version-manager.cjs bump",
     "version:sync": "node scripts/mod-tools/version-manager.cjs sync"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@hookform/resolvers": "^3.3.4",
     "@tanstack/react-query": "^5.25.0",
     "@trpc/client": "^11.0.0-rc.300",

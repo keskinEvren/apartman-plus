@@ -1,13 +1,13 @@
-
 "use client";
 
 import { trpc } from "@/lib/trpc";
-import { Lock, Save, Settings, User } from "lucide-react";
+import { Home, Lock, Save, Settings, User } from "lucide-react";
 import React, { useState } from "react";
+import { HouseholdTab } from "./components/HouseholdTab";
 
 export default function SettingsPage() {
   const utils = trpc.useUtils();
-  const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "security" | "household">("profile");
   
   // Profile State
   const { data: user, isLoading } = trpc.user.me.useQuery();
@@ -72,15 +72,22 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="flex gap-6 items-start">
+      <div className="flex gap-6 items-start flex-col md:flex-row">
         {/* Sidebar Navigation for Settings */}
-        <div className="w-64 bg-white rounded-xl border shadow-sm p-4 space-y-2">
+        <div className="w-full md:w-64 bg-white rounded-xl border shadow-sm p-4 space-y-2">
             <button
                 onClick={() => setActiveTab("profile")}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === "profile" ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"}`}
             >
                 <User className="w-4 h-4" />
                 Profil Bilgileri
+            </button>
+            <button
+                onClick={() => setActiveTab("household")}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === "household" ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"}`}
+            >
+                <Home className="w-4 h-4" />
+                Hane Bilgileri
             </button>
             <button
                 onClick={() => setActiveTab("security")}
@@ -92,7 +99,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-xl border shadow-sm p-8 min-h-[400px]">
+        <div className="flex-1 bg-white rounded-xl border shadow-sm p-8 min-h-[400px] w-full">
             {activeTab === "profile" && (
                 <div className="animate-in fade-in slide-in-from-left-4 duration-300">
                     <h2 className="text-lg font-bold text-gray-900 mb-6 pb-4 border-b">Profil Bilgileri</h2>
@@ -134,6 +141,10 @@ export default function SettingsPage() {
                         </div>
                     </form>
                 </div>
+            )}
+
+            {activeTab === "household" && (
+                <HouseholdTab />
             )}
 
             {activeTab === "security" && (

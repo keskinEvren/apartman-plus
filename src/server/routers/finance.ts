@@ -1,7 +1,8 @@
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { units } from "../../db/schema/apartments";
+import { unitAssignments, units } from "../../db/schema/apartments";
 import { duesTemplates, expenseCategoryEnum, expenses, invoices, payments } from "../../db/schema/finance";
+import { notifications } from "../../db/schema/notifications";
 import { adminProcedure, router } from "../trpc";
 
 export const financeRouter = router({
@@ -101,6 +102,30 @@ export const financeRouter = router({
       }));
 
       await ctx.db.insert(invoices).values(newInvoices);
+
+      // 4. Create notifications for each unit assignment
+      // We need to find the userIds for these units.
+      // Reuse the logic or join unit_assignments.
+      
+      const assignments = await ctx.db.select({
+        userId: unitAssignments.userId,
+        unitId: unitAssignments.unitId,
+      })
+      .from(unitAssignments)
+      .where(eq(units.apartmentId, input.apartmentId))
+      .leftJoin(units, eq(unitAssignments.unitId, units.id));
+
+      const notificationsData = assignments.map(a => ({
+          userId: a.userId,
+          title: "Yeni Aidat Borcu",
+          message: `${description} dönemi için ${template.amount} TL borç yansıtıldı.`,
+          type: "warning" as const,
+          link: "/dashboard/resident/finance"
+      }));
+
+      if (notificationsData.length > 0) {
+          await ctx.db.insert(notifications).values(notificationsData);
+      }
 
       return { success: true, count: newInvoices.length };
     }),
