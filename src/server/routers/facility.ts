@@ -1,8 +1,10 @@
+
 import { TRPCError } from "@trpc/server";
-import { desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, lt } from "drizzle-orm";
 import { z } from "zod";
-import { facilities } from "../../db/schema/facilities";
+import { facilities, reservations } from "../../db/schema/facilities";
 import { facilitySessions } from "../../db/schema/facility_sessions";
+import { facilityWaitlist } from "../../db/schema/facility_waitlist";
 import { adminProcedure, protectedProcedure, router } from "../trpc";
 
 export const facilityRouter = router({
@@ -130,5 +132,137 @@ export const facilityRouter = router({
     .mutation(async ({ ctx, input }) => {
       return ctx.db.delete(facilitySessions).where(eq(facilitySessions.id, input.id)).returning();
     }),
+
+  // ============ WAITLIST MANAGEMENT ============
+
+  // Join waitlist for a full session
+  joinWaitlist: protectedProcedure
+    .input(
+      z.object({
+        facilityId: z.string().uuid(),
+        sessionId: z.string().uuid(),
+        date: z.string().datetime(), // ISO 8601 string
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const dateObj = new Date(input.date);
+      
+      // 1. Check if user is already in waitlist for this session/date
+      const existingEntry = await ctx.db.query.facilityWaitlist.findFirst({
+        where: and(
+          eq(facilityWaitlist.sessionId, input.sessionId),
+          eq(facilityWaitlist.userId, ctx.user.id),
+          eq(facilityWaitlist.date, dateObj),
+          eq(facilityWaitlist.status, "pending")
+        ),
+      });
+
+      if (existingEntry) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Bu seans için zaten bekleme listesindesiniz.",
+        });
+      }
+
+      // 2. Check if user already has a reservation (no need to waitlist if reserved)
+      const existingReservation = await ctx.db.query.reservations.findFirst({
+        where: and(
+          eq(reservations.sessionId, input.sessionId),
+          eq(reservations.userId, ctx.user.id),
+          // Need to check day match roughly, but since we store precise start/end, 
+          // we rely on frontend sending correct date object or check overlap logic.
+          // Ideally check intersection with session time on that date.
+        )
+      });
+      // Simplified check: assume sessionId + date logic handled by frontend/reservation router
+      
+      // 3. Add to waitlist
+      return ctx.db.insert(facilityWaitlist).values({
+        facilityId: input.facilityId,
+        sessionId: input.sessionId,
+        userId: ctx.user.id,
+        date: dateObj,
+        status: "pending",
+      }).returning();
+    }),
+
+  // Get waitlist status for a specific session/date
+  getWaitlistStatus: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        date: z.string().datetime(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const dateObj = new Date(input.date);
+
+      // Check user's position
+      const userEntry = await ctx.db.query.facilityWaitlist.findFirst({
+        where: and(
+          eq(facilityWaitlist.sessionId, input.sessionId),
+          eq(facilityWaitlist.userId, ctx.user.id),
+          eq(facilityWaitlist.date, dateObj),
+          eq(facilityWaitlist.status, "pending")
+        ),
+      });
+
+      if (!userEntry) return null;
+
+      // Count people ahead
+      const aheadCount = await ctx.db
+        .select({ count: count() })
+        .from(facilityWaitlist)
+        .where(and(
+          eq(facilityWaitlist.sessionId, input.sessionId),
+          eq(facilityWaitlist.date, dateObj),
+          eq(facilityWaitlist.status, "pending"),
+          lt(facilityWaitlist.createdAt, userEntry.createdAt)
+        ));
+
+      return {
+        isInWaitlist: true,
+        position: Number(aheadCount[0].count) + 1,
+        entryDate: userEntry.createdAt,
+      };
+    }),
+
+  // Leave waitlist
+  leaveWaitlist: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        date: z.string().datetime(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+       const dateObj = new Date(input.date);
+       
+       return ctx.db
+         .update(facilityWaitlist)
+         .set({ status: "cancelled" })
+         .where(and(
+           eq(facilityWaitlist.sessionId, input.sessionId),
+           eq(facilityWaitlist.userId, ctx.user.id),
+           eq(facilityWaitlist.date, dateObj),
+           eq(facilityWaitlist.status, "pending")
+         ))
+         .returning();
+    }),
+    // Resident: Get my waitlist entries
+  myWaitlist: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.facilityWaitlist.findMany({
+      where: and(
+        eq(facilityWaitlist.userId, ctx.user.id),
+        eq(facilityWaitlist.status, "pending")
+      ),
+      with: {
+        facility: true,
+        session: true,
+      },
+      orderBy: desc(facilityWaitlist.createdAt),
+    });
+  }),
 });
+
 

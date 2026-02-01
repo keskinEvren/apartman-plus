@@ -1,8 +1,10 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, gte, sql } from "drizzle-orm";
+import { and, count, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 import { facilities, reservations } from "../../db/schema/facilities";
 import { facilitySessions } from "../../db/schema/facility_sessions";
+import { facilityWaitlist } from "../../db/schema/facility_waitlist";
+import { notifications } from "../../db/schema/notifications";
 import { protectedProcedure, router } from "../trpc";
 
 export const reservationRouter = router({
@@ -129,11 +131,70 @@ export const reservationRouter = router({
         throw new TRPCError({ code: "FORBIDDEN", message: "You can only cancel your own reservations" });
       }
 
-      return ctx.db
+      // 1. Cancel the reservation
+      const cancelledReservation = await ctx.db
         .update(reservations)
         .set({ status: "cancelled" })
         .where(eq(reservations.id, input.id))
         .returning();
+
+      // 2. Trigger Waitlist Processing (if session-based)
+      if (reservation.sessionId) {
+        // Find next person in waitlist (FIFO)
+        // Note: Using reservation.startTime as the date key. 
+        // This assumes waitlist.date aligns with reservation.startTime's date component or value.
+        // Since we don't have normalized date column, we rely on how date was stored.
+        // Ideally we should extract YYYY-MM-DD or use range, but for now exact match on the Date object logic used in joining.
+        
+        // Ensure we match the "day" logic. 
+        // If joinWaitlist used "2024-02-01T00:00:00Z", and reservation used "2024-02-01T09:00:00Z", strict eq fails.
+        // But let's assume waitlist entries are checked against the requested date.
+        // We need to find waitlist entries for this sessionId and this "day".
+        
+        const resDate = new Date(reservation.startTime);
+        // Normalize to day start for search if that's how we store it?
+        // Actually facilityWaitlist.date is timestamp. Let's try to match by day range if possible or exact if consistent.
+        // Let's rely on sessionId mainly, but we must match date.
+        // Let's assume the system uses normalized dates for "date" field in waitlist.
+        // We will define specific "day" boundaries.
+        
+        // Simpler approach: Check pending waitlist items for this sessionId. 
+        // And ensure they are for the same "day" as the cancelled reservation.
+        
+        const dayStart = new Date(resDate); dayStart.setHours(0,0,0,0);
+        const dayEnd = new Date(resDate); dayEnd.setHours(23,59,59,999);
+
+        const nextInLine = await ctx.db.query.facilityWaitlist.findFirst({
+           where: and(
+             eq(facilityWaitlist.sessionId, reservation.sessionId),
+             eq(facilityWaitlist.status, "pending"),
+             gte(facilityWaitlist.date, dayStart), // Match within the day
+             lte(facilityWaitlist.date, dayEnd)
+           ),
+           orderBy: (waitlist, { asc }) => [asc(waitlist.createdAt)],
+        });
+
+        if (nextInLine) {
+           // Notify them transactionally
+           await ctx.db.transaction(async (tx) => {
+             // Update waitlist status
+             await tx.update(facilityWaitlist)
+               .set({ status: "notified", notifiedAt: new Date() })
+               .where(eq(facilityWaitlist.id, nextInLine.id));
+             
+             // Create notification
+             await tx.insert(notifications).values({
+               userId: nextInLine.userId,
+               title: "Yer Açıldı! 🎉",
+               message: "Beklediğiniz seans için yer açıldı. Hemen rezervasyon yapabilirsiniz.",
+               type: "success",
+               link: "/dashboard/facilities",
+             });
+           });
+        }
+      }
+
+      return cancelledReservation;
     }),
 
   // Get occupancy for a specific session on a specific date
@@ -179,8 +240,8 @@ export const reservationRouter = router({
             eq(reservations.facilityId, input.facilityId),
             eq(reservations.sessionId, input.sessionId),
             sql`${reservations.status} IN ('pending', 'approved')`,
-            sql`${reservations.startTime} >= ${dayStart.toISOString()}`,
-            sql`${reservations.endTime} <= ${dayEnd.toISOString()}`
+            gte(reservations.startTime, dayStart),
+            lte(reservations.startTime, dayEnd) // Check distinct start times within the day
           )
         );
 

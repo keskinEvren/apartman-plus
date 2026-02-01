@@ -44,13 +44,17 @@ export default function ResidentFacilitiesPage() {
       }
 
       // Parse session times and combine with selected date
+      // Use NOON as base to ensure we stay on the correct day after timezone conversion
+      const safeDate = new Date(date);
+      safeDate.setHours(12, 0, 0, 0);
+
       const [startHour, startMin] = selectedSessionTimes.start.split(":").map(Number);
       const [endHour, endMin] = selectedSessionTimes.end.split(":").map(Number);
       
-      const startTime = new Date(date);
+      const startTime = new Date(safeDate);
       startTime.setHours(startHour, startMin, 0, 0);
       
-      const endTime = new Date(date);
+      const endTime = new Date(safeDate);
       endTime.setHours(endHour, endMin, 0, 0);
 
       createReservationMutation.mutate({
