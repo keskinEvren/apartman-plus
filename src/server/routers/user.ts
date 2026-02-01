@@ -1,4 +1,4 @@
-import { unitAssignments, units, users } from "@/db/schema";
+import { unitAssignments, units, users } from "@/db/schema/index";
 import { eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
 import { adminProcedure, protectedProcedure, publicProcedure, router, superAdminProcedure } from "../trpc";

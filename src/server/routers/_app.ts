@@ -2,6 +2,7 @@ import { router } from "../trpc";
 import { apartmentRouter } from "./apartment";
 import { financeRouter } from "./finance";
 import { opsRouter } from "./ops";
+import { profileRouter } from "./profile";
 import { socialRouter } from "./social";
 import { userRouter } from "./user";
 
@@ -19,8 +20,10 @@ export const appRouter = router({
   apartment: apartmentRouter,
   finance: financeRouter,
   ops: opsRouter,
+  ops: opsRouter,
   social: socialRouter,
   notifications: notificationsRouter,
+  profile: profileRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -437,5 +437,3 @@ Dashboard geçişlerinde yumuşak "fade-in" efektleri.
 
 Tasarım Notu: Karanlık Mod (Dark Mode) seçeneğini mutlaka eklemeliyiz. Gece geç saatte eve gelip asansör arızası bildiren bir kullanıcının gözlerini parlak beyaz bir ekranla yormak istemeyiz.
 Tasarım rehberimiz de hazır! Dokümantasyonun teknik ve görsel iskeleti artık tamamlandı.
-
-
