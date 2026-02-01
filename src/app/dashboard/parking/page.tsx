@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/lib/trpc";
-import { Car, Search, Phone, User } from "lucide-react";
+import { Car, Phone, Search, User } from "lucide-react";
 import React, { useState } from "react";
 
 export default function ParkingPage() {
@@ -16,7 +16,7 @@ export default function ParkingPage() {
     return () => clearTimeout(timer);
   }, [plateQuery]);
 
-  const { data: results, isLoading, error } = trpc.profile.searchPlate.useMutation();
+
   const searchMut = trpc.profile.searchPlate.useMutation();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -117,7 +117,7 @@ export default function ParkingPage() {
         </div>
         <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl text-sm text-purple-800">
             <strong className="block mb-1">Bilgi Güncelleme</strong>
-            Kendi araç bilginizi "Ayarlar > Hane Bilgileri" menüsünden güncelleyebilirsiniz.
+            Kendi araç bilginizi &quot;Ayarlar &gt; Hane Bilgileri&quot; menüsünden güncelleyebilirsiniz.
         </div>
       </div>
     </div>

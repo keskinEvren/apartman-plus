@@ -14,6 +14,9 @@ import { userRouter } from "./user";
  * Register all sub-routers here
  */
 
+import { facilityRouter } from "./facility";
+import { reservationRouter } from "./reservation";
+
 export const appRouter = router({
   auth: authRouter,
   user: userRouter,
@@ -24,6 +27,8 @@ export const appRouter = router({
   notifications: notificationsRouter,
   profile: profileRouter,
   invitation: invitationRouter,
+  facility: facilityRouter,
+  reservation: reservationRouter,
 });
 
 export type AppRouter = typeof appRouter;

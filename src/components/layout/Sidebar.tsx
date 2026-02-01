@@ -3,7 +3,9 @@
 import { cn } from "@/lib/utils";
 import {
     Building2,
+    CalendarCheck,
     Car,
+    Dumbbell,
     Home,
     LogOut,
     Megaphone,
@@ -50,6 +52,7 @@ export function Sidebar({ className }: { className?: string }) {
     { href: "/dashboard/admin/announcements", label: "Duyurular", icon: Megaphone },
     { href: "/dashboard/admin/invitations", label: "Davetiyeler", icon: UserPlus },
     { href: "/dashboard/admin/users", label: "Kullanıcılar", icon: Users },
+    { href: "/dashboard/admin/facilities", label: "Sosyal Tesisler", icon: Dumbbell },
   ];
 
   const residentItems: NavItem[] = [
@@ -57,6 +60,8 @@ export function Sidebar({ className }: { className?: string }) {
     { href: "/dashboard/resident/requests", label: "Taleplerim", icon: Wrench },
     { href: "/dashboard/resident/payments", label: "Ödemelerim", icon: Wallet },
     { href: "/dashboard/parking", label: "Otopark", icon: Car },
+    { href: "/dashboard/facilities", label: "Sosyal Tesisler", icon: Dumbbell },
+    { href: "/dashboard/my-reservations", label: "Rezervasyonlarım", icon: CalendarCheck },
   ];
 
   const items = (role === "admin" || role === "super_admin") ? adminItems : residentItems;
