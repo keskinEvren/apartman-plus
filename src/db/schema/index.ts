@@ -1,5 +1,6 @@
 export * from "./apartments";
 export * from "./finance";
+export * from "./invitations";
 export * from "./notifications";
 export * from "./ops";
 export * from "./profiles"; // Added profiles schema

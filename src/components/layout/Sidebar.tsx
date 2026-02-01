@@ -8,6 +8,7 @@ import {
     LogOut,
     Megaphone,
     Settings,
+    UserPlus,
     Users,
     Wallet,
     Wrench
@@ -47,6 +48,7 @@ export function Sidebar({ className }: { className?: string }) {
     { href: "/dashboard/finance", label: "Finans Yönetimi", icon: Wallet },
     { href: "/dashboard/admin/requests", label: "Arıza Talepleri", icon: Wrench },
     { href: "/dashboard/admin/announcements", label: "Duyurular", icon: Megaphone },
+    { href: "/dashboard/admin/invitations", label: "Davetiyeler", icon: UserPlus },
     { href: "/dashboard/admin/users", label: "Kullanıcılar", icon: Users },
   ];
 
