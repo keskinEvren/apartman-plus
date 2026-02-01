@@ -1,6 +1,7 @@
-import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { SidebarProvider } from "@/components/layout/SidebarContext";
+import React from "react";
 
 export default function DashboardLayout({
   children,
@@ -8,12 +9,20 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 ml-64 mt-14 p-6">{children}</main>
+    <SidebarProvider>
+      <div className="min-h-screen bg-slate-50">
+        <Header />
+        <div className="flex">
+          <Sidebar />
+          {/* Main Content: 
+              - ml-0 on mobile (Sidebar is overlay)
+              - md:ml-64 on desktop (Sidebar is fixed side)
+          */}
+          <main className="flex-1 ml-0 md:ml-64 mt-14 p-4 md:p-6 w-full max-w-[100vw] overflow-x-hidden">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
