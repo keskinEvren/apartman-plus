@@ -1,0 +1,1 @@
+ALTER TABLE "facility_sessions" ALTER COLUMN "days_of_week" SET DEFAULT ARRAY[0, 1, 2, 3, 4, 5, 6];

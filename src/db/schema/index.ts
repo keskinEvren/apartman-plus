@@ -1,5 +1,6 @@
 export * from "./apartments";
 export * from "./facilities";
+export * from "./facility_sessions";
 export * from "./finance";
 export * from "./invitations";
 export * from "./notifications";

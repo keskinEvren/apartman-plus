@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionPicker } from "@/components/booking/SessionPicker";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,7 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { trpc } from "@/lib/trpc";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
-import { Clock, Users } from "lucide-react";
+import { CalendarClock, Clock, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -16,33 +17,76 @@ export default function ResidentFacilitiesPage() {
   const [selectedFacility, setSelectedFacility] = useState<any>(null);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [selectedSessionTimes, setSelectedSessionTimes] = useState<{ start: string; end: string } | null>(null);
 
   const { data: facilities, isLoading } = trpc.facility.list.useQuery();
   
-  // NOTE: This is a simplification. In a real app, you'd fetch reservations for the selected facility & date via TRPC
-  // Here we assume reservation logic is handled in mutation validation mostly, 
-  // but for UI red-state we would need a `facility.getAvailability` query.
-  // For now, let's proceed with just the booking action.
   const createReservationMutation = trpc.reservation.create.useMutation({
     onSuccess: () => {
       toast.success("Rezervasyon başarıyla oluşturuldu!");
       setSelectedFacility(null);
       setSelectedSlot(null);
+      setSelectedSessionId(null);
+      setSelectedSessionTimes(null);
     },
     onError: (error: any) => toast.error(error.message),
   });
 
   const handleBook = () => {
-    if (!selectedFacility || !selectedSlot) return;
+    if (!selectedFacility || !date) return;
 
-    const endTime = new Date(selectedSlot);
-    endTime.setHours(endTime.getHours() + 1); // 1 hour slots default
+    if (selectedFacility.useSessions) {
+      // Session-based booking
+      if (!selectedSessionId || !selectedSessionTimes) {
+        toast.error("Lütfen bir seans seçin");
+        return;
+      }
 
-    createReservationMutation.mutate({
-      facilityId: selectedFacility.id,
-      startTime: selectedSlot.toISOString(),
-      endTime: endTime.toISOString(),
-    });
+      // Parse session times and combine with selected date
+      const [startHour, startMin] = selectedSessionTimes.start.split(":").map(Number);
+      const [endHour, endMin] = selectedSessionTimes.end.split(":").map(Number);
+      
+      const startTime = new Date(date);
+      startTime.setHours(startHour, startMin, 0, 0);
+      
+      const endTime = new Date(date);
+      endTime.setHours(endHour, endMin, 0, 0);
+
+      createReservationMutation.mutate({
+        facilityId: selectedFacility.id,
+        sessionId: selectedSessionId,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+      });
+    } else {
+      // Hourly booking
+      if (!selectedSlot) {
+        toast.error("Lütfen bir saat seçin");
+        return;
+      }
+
+      const endTime = new Date(selectedSlot);
+      endTime.setHours(endTime.getHours() + 1); // 1 hour slots default
+
+      createReservationMutation.mutate({
+        facilityId: selectedFacility.id,
+        startTime: selectedSlot.toISOString(),
+        endTime: endTime.toISOString(),
+      });
+    }
+  };
+
+  const handleSelectSession = (sessionId: string, startTime: string, endTime: string) => {
+    setSelectedSessionId(sessionId);
+    setSelectedSessionTimes({ start: startTime, end: endTime });
+  };
+
+  const openBookingDialog = (facility: any) => {
+    setSelectedFacility(facility);
+    setSelectedSlot(null);
+    setSelectedSessionId(null);
+    setSelectedSessionTimes(null);
   };
 
   return (
@@ -60,7 +104,15 @@ export default function ResidentFacilitiesPage() {
         ) : facilities?.map((facility) => (
           <Card key={facility.id} className="flex flex-col">
             <CardHeader>
-              <CardTitle>{facility.name}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>{facility.name}</CardTitle>
+                {facility.useSessions && (
+                  <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-purple-50 text-purple-700">
+                    <CalendarClock className="h-3 w-3" />
+                    Seans
+                  </span>
+                )}
+              </div>
               <CardDescription>{facility.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 space-y-2 text-sm text-slate-600">
@@ -74,7 +126,7 @@ export default function ResidentFacilitiesPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" onClick={() => setSelectedFacility(facility)}>
+              <Button className="w-full" onClick={() => openBookingDialog(facility)}>
                 Rezervasyon Yap
               </Button>
             </CardFooter>
@@ -85,7 +137,12 @@ export default function ResidentFacilitiesPage() {
       <Dialog open={!!selectedFacility} onOpenChange={(open) => !open && setSelectedFacility(null)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Rezervasyon: {selectedFacility?.name}</DialogTitle>
+            <DialogTitle>
+              Rezervasyon: {selectedFacility?.name}
+              {selectedFacility?.useSessions && (
+                <span className="ml-2 text-sm font-normal text-purple-600">(Seans Bazlı)</span>
+              )}
+            </DialogTitle>
           </DialogHeader>
           
           <div className="grid md:grid-cols-[300px_1fr] gap-6 py-4">
@@ -93,26 +150,43 @@ export default function ResidentFacilitiesPage() {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(d) => {
+                  setDate(d);
+                  setSelectedSlot(null);
+                  setSelectedSessionId(null);
+                  setSelectedSessionTimes(null);
+                }}
                 disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                 className="rounded-md border"
               />
             </div>
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium mb-2">
+                <h3 className="font-medium mb-3">
                   {date ? format(date, "d MMMM yyyy, EEEE", { locale: tr }) : "Tarih Seçiniz"}
                 </h3>
+                
                 {date && selectedFacility && (
-                  <TimeSlotPicker
-                    openHour={selectedFacility.openHour}
-                    closeHour={selectedFacility.closeHour}
-                    selectedDate={date}
-                    selectedSlot={selectedSlot}
-                    onSelectSlot={setSelectedSlot}
-                    reservations={[]} // TODO: Fetch real availability
-                    capacity={selectedFacility.capacity}
-                  />
+                  selectedFacility.useSessions ? (
+                    // Session-based picker
+                    <SessionPicker
+                      facilityId={selectedFacility.id}
+                      selectedDate={date}
+                      selectedSessionId={selectedSessionId}
+                      onSelectSession={handleSelectSession}
+                    />
+                  ) : (
+                    // Hourly picker (legacy)
+                    <TimeSlotPicker
+                      openHour={selectedFacility.openHour}
+                      closeHour={selectedFacility.closeHour}
+                      selectedDate={date}
+                      selectedSlot={selectedSlot}
+                      onSelectSlot={setSelectedSlot}
+                      reservations={[]}
+                      capacity={selectedFacility.capacity}
+                    />
+                  )
                 )}
               </div>
             </div>
@@ -120,7 +194,13 @@ export default function ResidentFacilitiesPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedFacility(null)}>İptal</Button>
-            <Button onClick={handleBook} disabled={!selectedSlot || createReservationMutation.isPending}>
+            <Button 
+              onClick={handleBook} 
+              disabled={
+                (!selectedSlot && !selectedSessionId) || 
+                createReservationMutation.isPending
+              }
+            >
               {createReservationMutation.isPending ? "İşleniyor..." : "Onayla ve Bitir"}
             </Button>
           </DialogFooter>

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const facilityStatusEnum = pgEnum("facility_status", ["active", "maintenance", "closed"]);
@@ -12,6 +12,7 @@ export const facilities = pgTable("facilities", {
   capacity: integer("capacity").notNull().default(1),
   openHour: integer("open_hour").notNull().default(8), // 8 means 08:00
   closeHour: integer("close_hour").notNull().default(22), // 22 means 22:00
+  useSessions: boolean("use_sessions").notNull().default(false), // If true, use session-based booking
   status: facilityStatusEnum("status").default("active"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -21,6 +22,7 @@ export const reservations = pgTable("reservations", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull().references(() => users.id),
   facilityId: uuid("facility_id").notNull().references(() => facilities.id),
+  sessionId: uuid("session_id"), // Optional: links to facility_sessions if session-based
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time").notNull(),
   status: reservationStatusEnum("status").default("pending"),
